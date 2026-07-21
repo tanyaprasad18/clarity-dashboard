@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clarity Dashboard — IBM Career Operating System</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ibm-blue: #0f62fe;
+    --ibm-blue-hover: #0353e9;
+    --ibm-blue-light: #d0e2ff;
+    --ibm-gray-10: #f4f4f4;
+    --ibm-gray-20: #e0e0e0;
+    --ibm-gray-30: #c6c6c6;
+    --ibm-gray-50: #8d8d8d;
+    --ibm-gray-70: #525252;
+    --ibm-gray-90: #262626;
+    --ibm-gray-100: #161616;
+    --ibm-green: #198038;
+    --ibm-green-light: #defbe6;
+    --ibm-yellow: #f1c21b;
+    --ibm-yellow-light: #fdf6dd;
+    --ibm-red: #da1e28;
+    --ibm-red-light: #fff1f1;
+    --ibm-teal: #007d79;
+    --ibm-teal-light: #d9fbfb;
+    --ibm-purple: #6929c4;
+    --ibm-purple-light: #e8daff;
+    --sidebar-w: 240px;
+    --header-h: 48px;
+    --font: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
+
+  body { font-family: var(--font); background: var(--ibm-gray-10); color: var(--ibm-gray-100); font-size: 14px; line-height: 1.5; overflow: hidden; height: 100vh; }
+
+  /* ── LAYOUT ── */
+  #app { display: flex; height: 100vh; }
+  #sidebar { width: var(--sidebar-w); background: var(--ibm-gray-100); color: white; display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; }
+  #main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  #topbar { height: var(--header-h); background: white; border-bottom: 1px solid var(--ibm-gray-20); display: flex; align-items: center; padding: 0 16px; gap: 12px; flex-shrink: 0; }
+  #content { flex: 1; overflow-y: auto; padding: 24px; }
+
+  /* ── SIDEBAR ── */
+  .sidebar-brand { padding: 16px; border-bottom: 1px solid #393939; display: flex; align-items: center; gap: 10px; }
+  .sidebar-brand-icon { width: 28px; height: 28px; background: var(--ibm-blue); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: white; }
+  .sidebar-brand-text { font-weight: 600; font-size: 15px; }
+  .sidebar-brand-sub { font-size: 10px; color: var(--ibm-gray-30); font-weight: 300; }
+  .sidebar-section { padding: 16px 0 4px; }
+  .sidebar-section-label { font-size: 11px; color: var(--ibm-gray-50); text-transform: uppercase; letter-spacing: 0.08em; padding: 0 16px; margin-bottom: 4px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; cursor: pointer; color: var(--ibm-gray-30); font-size: 13.5px; transition: background 0.1s, color 0.1s; border-left: 2px solid transparent; }
+  .nav-item:hover { background: #393939; color: white; }
+  .nav-item.active { background: var(--ibm-blue); color: white; border-left-color: #669fff; }
+  .nav-icon { width: 16px; height: 16px; opacity: 0.8; flex-shrink: 0; }
+  .nav-badge { margin-left: auto; background: var(--ibm-red); color: white; font-size: 10px; font-weight: 600; border-radius: 10px; padding: 1px 6px; }
+  .sidebar-user { margin-top: auto; padding: 12px 16px; border-top: 1px solid #393939; display: flex; align-items: center; gap: 10px; }
+  .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--ibm-blue); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px; color: white; flex-shrink: 0; }
+  .user-name { font-size: 13px; font-weight: 500; color: white; }
+  .user-role { font-size: 11px; color: var(--ibm-gray-50); }
+
+  /* ── TOPBAR ── */
+  .topbar-title { font-size: 16px; font-weight: 600; color: var(--ibm-gray-100); }
+  .topbar-subtitle { font-size: 12px; color: var(--ibm-gray-50); }
+  .topbar-spacer { flex: 1; }
+  .topbar-btn { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 2px; cursor: pointer; font-size: 13px; font-family: var(--font); font-weight: 500; border: none; transition: background 0.1s; }
+  .btn-primary { background: var(--ibm-blue); color: white; }
+  .btn-primary:hover { background: var(--ibm-blue-hover); }
+  .btn-ghost { background: transparent; color: var(--ibm-blue); border: 1px solid var(--ibm-blue); }
+  .btn-ghost:hover { background: var(--ibm-blue-light); }
+  .btn-danger { background: var(--ibm-red); color: white; }
+  .topbar-search { display: flex; align-items: center; background: var(--ibm-gray-10); border: 1px solid var(--ibm-gray-20); border-radius: 2px; padding: 5px 10px; gap: 6px; width: 220px; }
+  .topbar-search input { border: none; background: transparent; font-family: var(--font); font-size: 13px; outline: none; width: 100%; color: var(--ibm-gray-100); }
+
+  /* ── SCREENS ── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── CARDS & TILES ── */
+  .card { background: white; border: 1px solid var(--ibm-gray-20); padding: 20px; }
+  .card-sm { padding: 16px; }
+  .card-title { font-size: 12px; font-weight: 600; color: var(--ibm-gray-70); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; }
+  .card-value { font-size: 28px; font-weight: 300; color: var(--ibm-gray-100); line-height: 1.2; }
+  .card-value-sm { font-size: 20px; font-weight: 400; }
+  .card-trend { font-size: 12px; color: var(--ibm-green); margin-top: 4px; }
+  .card-trend.down { color: var(--ibm-red); }
+
+  /* ── GRID ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
+  .grid-col-span-2 { grid-column: span 2; }
+  .grid-col-span-3 { grid-column: span 3; }
+
+  /* ── PAGE HEADER ── */
+  .page-header { margin-bottom: 24px; }
+  .page-header h1 { font-size: 22px; font-weight: 400; color: var(--ibm-gray-100); }
+  .page-header p { font-size: 13px; color: var(--ibm-gray-70); margin-top: 4px; }
+
+  /* ── TAGS ── */
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 1px; font-size: 11px; font-weight: 500; }
+  .tag-blue { background: var(--ibm-blue-light); color: var(--ibm-blue); }
+  .tag-green { background: var(--ibm-green-light); color: var(--ibm-green); }
+  .tag-yellow { background: var(--ibm-yellow-light); color: #825200; }
+  .tag-red { background: var(--ibm-red-light); color: var(--ibm-red); }
+  .tag-purple { background: var(--ibm-purple-light); color: var(--ibm-purple); }
+  .tag-teal { background: var(--ibm-teal-light); color: var(--ibm-teal); }
+  .tag-gray { background: var(--ibm-gray-20); color: var(--ibm-gray-70); }
+
+  /* ── STATUS BADGES ── */
+  .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; }
+  .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+  .badge-green::before { background: var(--ibm-green); }
+  .badge-yellow::before { background: var(--ibm-yellow); }
+  .badge-red::before { background: var(--ibm-red); }
+  .badge-blue::before { background: var(--ibm-blue); }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap { margin-bottom: 12px; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; color: var(--ibm-gray-70); }
+  .progress-bar { height: 6px; background: var(--ibm-gray-20); border-radius: 0; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 0; transition: width 0.4s; }
+  .progress-fill-blue { background: var(--ibm-blue); }
+  .progress-fill-green { background: var(--ibm-green); }
+  .progress-fill-yellow { background: var(--ibm-yellow); }
+  .progress-fill-red { background: var(--ibm-red); }
+  .progress-fill-purple { background: var(--ibm-purple); }
+  .progress-fill-teal { background: var(--ibm-teal); }
+
+  /* ── DIVIDER ── */
+  .divider { border: none; border-top: 1px solid var(--ibm-gray-20); margin: 16px 0; }
+
+  /* ── LIST ITEMS ── */
+  .list-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--ibm-gray-10); }
+  .list-item:last-child { border-bottom: none; }
+  .list-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .list-item-content { flex: 1; }
+  .list-item-title { font-size: 13.5px; font-weight: 500; color: var(--ibm-gray-100); }
+  .list-item-sub { font-size: 12px; color: var(--ibm-gray-70); margin-top: 2px; }
+  .list-item-meta { font-size: 11px; color: var(--ibm-gray-50); margin-top: 4px; }
+
+  /* ── NOTIFICATION BANNER ── */
+  .banner { padding: 10px 16px; display: flex; align-items: center; gap: 10px; font-size: 13px; border-left: 3px solid; margin-bottom: 16px; }
+  .banner-info { background: var(--ibm-blue-light); border-color: var(--ibm-blue); color: #003494; }
+  .banner-warn { background: var(--ibm-yellow-light); border-color: var(--ibm-yellow); color: #825200; }
+  .banner-success { background: var(--ibm-green-light); border-color: var(--ibm-green); color: var(--ibm-green); }
+
+  /* ── CHART PLACEHOLDER ── */
+  .chart-placeholder { background: var(--ibm-gray-10); height: 140px; display: flex; align-items: center; justify-content: center; color: var(--ibm-gray-50); font-size: 12px; position: relative; overflow: hidden; }
+  .chart-bars { display: flex; align-items: flex-end; gap: 6px; padding: 16px; height: 100%; width: 100%; }
+  .chart-bar { flex: 1; border-radius: 1px 1px 0 0; opacity: 0.85; min-height: 8px; }
+  .chart-line-svg { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+
+  /* ── SCORE RING ── */
+  .score-ring-wrap { display: flex; align-items: center; gap: 20px; }
+  .score-ring { position: relative; width: 90px; height: 90px; flex-shrink: 0; }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-ring-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+  .score-ring-val { font-size: 22px; font-weight: 300; line-height: 1; }
+  .score-ring-lbl { font-size: 9px; color: var(--ibm-gray-50); text-transform: uppercase; letter-spacing: 0.04em; }
+
+  /* ── MODAL ── */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: white; width: 560px; max-width: 95vw; max-height: 90vh; overflow-y: auto; }
+  .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--ibm-gray-20); display: flex; align-items: center; justify-content: space-between; }
+  .modal-title { font-size: 16px; font-weight: 600; }
+  .modal-close { background: none; border: none; cursor: pointer; font-size: 20px; color: var(--ibm-gray-70); padding: 0 4px; line-height: 1; }
+  .modal-body { padding: 20px; }
+  .modal-footer { padding: 12px 20px; border-top: 1px solid var(--ibm-gray-20); display: flex; justify-content: flex-end; gap: 8px; }
+
+  /* ── FORM ── */
+  .form-group { margin-bottom: 16px; }
+  .form-label { display: block; font-size: 12px; font-weight: 600; color: var(--ibm-gray-70); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .form-input { width: 100%; padding: 9px 12px; border: 1px solid var(--ibm-gray-30); background: var(--ibm-gray-10); font-family: var(--font); font-size: 13px; color: var(--ibm-gray-100); outline: none; border-radius: 0; transition: border-color 0.1s; }
+  .form-input:focus { border-color: var(--ibm-blue); background: white; }
+  .form-textarea { min-height: 80px; resize: vertical; }
+  .form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M6 8L0 0h12z' fill='%23525252'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+
+  /* ── TABS ── */
+  .tabs { display: flex; border-bottom: 2px solid var(--ibm-gray-20); margin-bottom: 20px; }
+  .tab { padding: 10px 16px; cursor: pointer; font-size: 13.5px; font-weight: 500; color: var(--ibm-gray-70); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; }
+  .tab:hover { color: var(--ibm-blue); }
+  .tab.active { color: var(--ibm-blue); border-bottom-color: var(--ibm-blue); }
+
+  /* ── TIMELINE ── */
+  .timeline-item { display: flex; gap: 14px; padding-bottom: 20px; position: relative; }
+  .timeline-item::before { content: ''; position: absolute; left: 11px; top: 24px; bottom: 0; width: 1px; background: var(--ibm-gray-20); }
+  .timeline-item:last-child::before { display: none; }
+  .timeline-dot { width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; }
+  .timeline-content { flex: 1; padding-top: 2px; }
+  .timeline-date { font-size: 11px; color: var(--ibm-gray-50); }
+  .timeline-title { font-size: 13.5px; font-weight: 500; margin: 2px 0; }
+  .timeline-body { font-size: 12.5px; color: var(--ibm-gray-70); }
+  .timeline-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+
+  /* ── STEP WIZARD ── */
+  .steps-bar { display: flex; align-items: center; margin-bottom: 28px; }
+  .step-node { display: flex; align-items: center; gap: 8px; flex: 1; }
+  .step-circle { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
+  .step-circle-done { background: var(--ibm-blue); color: white; }
+  .step-circle-active { background: var(--ibm-blue); color: white; box-shadow: 0 0 0 4px var(--ibm-blue-light); }
+  .step-circle-pending { background: var(--ibm-gray-20); color: var(--ibm-gray-70); }
+  .step-label { font-size: 12px; font-weight: 500; }
+  .step-label-active { color: var(--ibm-blue); }
+  .step-label-pending { color: var(--ibm-gray-50); }
+  .step-line { flex: 1; height: 1px; background: var(--ibm-gray-20); margin: 0 8px; }
+  .step-line-done { background: var(--ibm-blue); }
+
+  /* ── GAP MATRIX ── */
+  .gap-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--ibm-gray-10); }
+  .gap-row:last-child { border-bottom: none; }
+  .gap-skill { font-size: 13px; font-weight: 500; width: 180px; flex-shrink: 0; }
+  .gap-bar-wrap { flex: 1; }
+  .gap-status { font-size: 11px; width: 70px; text-align: right; flex-shrink: 0; }
+
+  /* ── GOAL CARD ── */
+  .goal-card { background: white; border: 1px solid var(--ibm-gray-20); padding: 16px; margin-bottom: 12px; }
+  .goal-card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+  .goal-card-icon { width: 32px; height: 32px; border-radius: 2px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 16px; }
+  .goal-card-title { font-size: 14px; font-weight: 600; }
+  .goal-card-org { font-size: 11px; color: var(--ibm-gray-50); margin-top: 2px; }
+
+  /* ── AI CHAT ── */
+  .chat-wrap { display: flex; flex-direction: column; gap: 14px; }
+  .chat-bubble { max-width: 82%; padding: 10px 14px; font-size: 13px; line-height: 1.55; }
+  .chat-bubble-user { background: var(--ibm-blue); color: white; margin-left: auto; border-radius: 12px 12px 2px 12px; }
+  .chat-bubble-ai { background: var(--ibm-gray-10); color: var(--ibm-gray-100); border-radius: 2px 12px 12px 12px; border: 1px solid var(--ibm-gray-20); }
+  .chat-ai-label { font-size: 10px; font-weight: 600; color: var(--ibm-blue); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .chat-input-row { display: flex; gap: 8px; margin-top: 8px; }
+  .chat-input { flex: 1; padding: 9px 12px; border: 1px solid var(--ibm-gray-30); font-family: var(--font); font-size: 13px; outline: none; }
+  .chat-input:focus { border-color: var(--ibm-blue); }
+
+  /* ── PROMOTION READINESS ── */
+  .readiness-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
+  .readiness-label { font-size: 13px; width: 200px; flex-shrink: 0; }
+  .readiness-bar { flex: 1; }
+  .readiness-score { font-size: 13px; font-weight: 600; width: 36px; text-align: right; flex-shrink: 0; }
+
+  /* ── TOOLTIP ── */
+  .tooltip-wrap { position: relative; display: inline-block; }
+  .tooltip-text { visibility: hidden; position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%); background: var(--ibm-gray-90); color: white; font-size: 11px; padding: 4px 8px; white-space: nowrap; z-index: 10; }
+  .tooltip-wrap:hover .tooltip-text { visibility: visible; }
+
+  /* ── MISC ── */
+  .flex { display: flex; }
+  .flex-col { flex-direction: column; }
+  .items-center { align-items: center; }
+  .justify-between { justify-content: space-between; }
+  .gap-8 { gap: 8px; }
+  .gap-12 { gap: 12px; }
+  .gap-16 { gap: 16px; }
+  .mt-8 { margin-top: 8px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-20 { margin-top: 20px; }
+  .mb-4 { margin-bottom: 4px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-12 { margin-bottom: 12px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-20 { margin-bottom: 20px; }
+  .text-sm { font-size: 12px; }
+  .text-xs { font-size: 11px; }
+  .text-muted { color: var(--ibm-gray-50); }
+  .text-blue { color: var(--ibm-blue); }
+  .text-green { color: var(--ibm-green); }
+  .text-red { color: var(--ibm-red); }
+  .font-semibold { font-weight: 600; }
+  .font-medium { font-weight: 500; }
+  .clickable { cursor: pointer; }
+  .clickable:hover { text-decoration: underline; color: var(--ibm-blue); }
+  .section-header { font-size: 14px; font-weight: 600; color: var(--ibm-gray-100); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+  .section-header a { font-size: 12px; font-weight: 400; color: var(--ibm-blue); cursor: pointer; text-decoration: none; }
+  .section-header a:hover { text-decoration: underline; }
+  .ai-chip { display: inline-flex; align-items: center; gap: 4px; background: var(--ibm-purple-light); color: var(--ibm-purple); font-size: 10px; font-weight: 600; padding: 2px 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .highlight-box { background: var(--ibm-blue-light); border-left: 3px solid var(--ibm-blue); padding: 12px 14px; margin-bottom: 16px; }
+  .highlight-box p { font-size: 13px; color: #003494; line-height: 1.5; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+  /* ── SHARE SCREEN ── */
+  .share-card { border: 1px solid var(--ibm-gray-20); padding: 16px; display: flex; align-items: flex-start; gap: 12px; cursor: pointer; transition: border-color 0.15s; }
+  .share-card:hover { border-color: var(--ibm-blue); }
+  .share-card.selected { border-color: var(--ibm-blue); background: var(--ibm-blue-light); }
+  .share-card-check { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--ibm-gray-30); flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; }
+  .share-card.selected .share-card-check { background: var(--ibm-blue); border-color: var(--ibm-blue); color: white; font-size: 11px; }
+
+  /* ── INTEGRATION TILE ── */
+  .integration-tile { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: white; border: 1px solid var(--ibm-gray-20); }
+  .integration-icon { width: 36px; height: 36px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .integration-title { font-size: 13px; font-weight: 600; }
+  .integration-desc { font-size: 11px; color: var(--ibm-gray-50); }
+  .integration-status { margin-left: auto; font-size: 11px; }
+
+  /* ── FAB (Floating Action Button) ── */
+  #fab-wrap { position: fixed; bottom: 28px; right: 28px; z-index: 500; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+  #fab-main { width: 52px; height: 52px; border-radius: 50%; background: var(--ibm-blue); color: white; border: none; cursor: pointer; font-size: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(15,98,254,0.45); transition: background 0.15s, transform 0.15s; font-family: var(--font); line-height: 1; }
+  #fab-main:hover { background: var(--ibm-blue-hover); transform: scale(1.07); }
+  #fab-main.open { background: var(--ibm-gray-90); transform: rotate(45deg); }
+  #fab-menu { display: none; flex-direction: column; gap: 8px; align-items: flex-end; }
+  #fab-menu.open { display: flex; }
+  .fab-option { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .fab-option-label { background: var(--ibm-gray-100); color: white; font-size: 12px; font-weight: 500; padding: 5px 12px; border-radius: 2px; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.25); font-family: var(--font); }
+  .fab-option-btn { width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 17px; box-shadow: 0 2px 8px rgba(0,0,0,0.18); transition: transform 0.12s; }
+  .fab-option-btn:hover { transform: scale(1.1); }
+
+  /* ── SIDEBAR LOG ICON ── */
+  .nav-log-btn { margin-left: auto; width: 22px; height: 22px; border-radius: 2px; background: transparent; border: 1px solid #525252; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ibm-gray-30); transition: background 0.1s, border-color 0.1s, color 0.1s; flex-shrink: 0; font-size: 14px; line-height: 1; }
+  .nav-log-btn:hover { background: var(--ibm-blue); border-color: var(--ibm-blue); color: white; }
+  .nav-item.active .nav-log-btn { border-color: rgba(255,255,255,0.4); color: white; }
+  .nav-item.active .nav-log-btn:hover { background: rgba(255,255,255,0.2); }
+</style>
+</head>
+<body>
+
+<!-- ══ LOG WORK MODAL ══ -->
+<div class="modal-overlay" id="logModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Quick Work Log</span>
+      <button class="modal-close" onclick="closeModal('logModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="banner banner-info" style="margin-bottom:16px">
+        <span>💡</span><span>Just describe what you did — AI will derive skills, impact, and goal alignment automatically.</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">What did you work on? <span style="color:var(--ibm-gray-50);font-weight:400;text-transform:none;letter-spacing:0">(required)</span></label>
+        <textarea class="form-input form-textarea" id="logText" placeholder="e.g. Finalized the Q3 dashboard redesign for watsonx. Presented to stakeholders and incorporated 3 rounds of feedback...">Finalized the Q3 dashboard redesign for the watsonx observability product. Led two stakeholder review sessions, incorporated feedback from 5 cross-functional partners, and shipped the design to engineering handoff.</textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tags <span style="color:var(--ibm-gray-50);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+          <span class="tag tag-blue">Design ✕</span>
+          <span class="tag tag-teal">Stakeholder ✕</span>
+          <span class="tag tag-purple">watsonx ✕</span>
+          <span class="tag tag-gray">+ Add tag</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date</label>
+        <input type="date" class="form-input" value="2025-07-14">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Add to Goal <span style="color:var(--ibm-gray-50);font-weight:400;text-transform:none;letter-spacing:0">(optional — AI will also suggest)</span></label>
+        <select class="form-input form-select" id="logGoalSelect" onchange="onGoalSelect(this)">
+          <option value="">— Let AI suggest the best match —</option>
+          <option value="g1">Deliver Q3 watsonx UX milestones</option>
+          <option value="g2">Build cross-functional influence</option>
+          <option value="g3" style="color:var(--ibm-red)">⚠ Drive AI product strategy (at risk)</option>
+          <option value="g4">Mentor 2 junior designers</option>
+          <option value="g5">Complete IBM Design Thinking cert</option>
+          <option value="g6">+ Create a new goal…</option>
+        </select>
+        <div id="logGoalHint" class="text-xs text-muted mt-4" style="display:none"></div>
+      </div>
+      <div style="background:var(--ibm-gray-10);padding:14px;border:1px solid var(--ibm-gray-20)">
+        <div class="flex items-center gap-8 mb-8">
+          <span class="ai-chip">✦ watsonx AI — Preview</span>
+        </div>
+        <div class="grid-3" style="gap:10px">
+          <div>
+            <div class="text-xs text-muted mb-4">Skills derived</div>
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <span class="tag tag-blue">UX Design</span>
+              <span class="tag tag-teal">Stakeholder Mgmt</span>
+              <span class="tag tag-purple">Communication</span>
+            </div>
+          </div>
+          <div>
+            <div class="text-xs text-muted mb-4">Impact statement</div>
+            <div class="text-sm" style="font-style:italic;color:var(--ibm-gray-70)">"Delivered design handoff for watsonx Q3 dashboard, unblocking engineering and aligning 5 stakeholders."</div>
+          </div>
+          <div>
+            <div class="text-xs text-muted mb-4">Metrics detected</div>
+            <div class="text-sm text-muted">• 2 review sessions<br>• 5 cross-functional partners<br>• 3 feedback iterations</div>
+          </div>
+        </div>
+        <div class="text-xs text-muted mt-8" id="aiGoalLine">AI suggested goal: <span class="text-blue font-medium">Deliver Q3 watsonx UX milestones</span> <span class="tag tag-green" style="margin-left:4px">Best match</span></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="topbar-btn btn-ghost" onclick="closeModal('logModal')">Cancel</button>
+      <button class="topbar-btn btn-primary" onclick="saveLog()">Confirm &amp; Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SHARE MODAL ══ -->
+<div class="modal-overlay" id="shareModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Share Content</span>
+      <button class="modal-close" onclick="closeModal('shareModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">What to share</label>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="share-card selected" onclick="toggleShare(this)">
+            <div class="share-card-check">✓</div>
+            <div><div class="font-semibold text-sm">Q2 Performance Summary</div><div class="text-xs text-muted">Apr–Jun 2025 · AI-generated</div></div>
+          </div>
+          <div class="share-card" onclick="toggleShare(this)">
+            <div class="share-card-check"></div>
+            <div><div class="font-semibold text-sm">Career Roadmap (Director track)</div><div class="text-xs text-muted">Private by default · 5-year plan</div></div>
+          </div>
+          <div class="share-card" onclick="toggleShare(this)">
+            <div class="share-card-check"></div>
+            <div><div class="font-semibold text-sm">Goal Alignment Report</div><div class="text-xs text-muted">Current quarter · SuccessFactors goals</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Recipient email</label>
+        <input class="form-input" type="email" placeholder="manager@ibm.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Access expires</label>
+        <select class="form-input form-select">
+          <option>7 days</option><option>30 days</option><option>90 days</option><option>Never</option>
+        </select>
+      </div>
+      <div class="banner banner-warn">
+        <span>🔒</span><span>The recipient can only view what you explicitly selected. They cannot see your private logs or career dream by default.</span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="topbar-btn btn-ghost" onclick="closeModal('shareModal')">Cancel</button>
+      <button class="topbar-btn btn-primary" onclick="alert('Secure link generated and sent.')">Generate Secure Link</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APP SHELL ══ -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon">C</div>
+      <div>
+        <div class="sidebar-brand-text">Clarity</div>
+        <div class="sidebar-brand-sub">Career Operating System</div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Overview</div>
+      <div class="nav-item active" onclick="navigate('dashboard',this)">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6"/><rect x="9" y="1" width="6" height="6"/><rect x="1" y="9" width="6" height="6"/><rect x="9" y="9" width="6" height="6"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-item" onclick="navigate('worklog',this)">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2h12v12H2zM2 2v12m4-12v12m4-12v12M2 6h12M2 10h12" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="5" y="5" width="2" height="2"/><rect x="9" y="5" width="2" height="2"/><rect x="5" y="9" width="2" height="2"/></svg>
+        Work Log
+        <span class="nav-badge">3</span>
+        <span class="nav-log-btn" title="Quick log" onclick="event.stopPropagation();openModal('logModal')">+</span>
+      </div>
+      <div class="nav-item" onclick="navigate('goals',this)">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6"/><circle cx="8" cy="8" r="3"/><circle cx="8" cy="8" r="1" fill="currentColor"/></svg>
+        Goals &amp; Alignment
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Career</div>
+      <div class="nav-item" onclick="navigate('career',this)">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 14L6 8l3 3 3-5 2 3"/><circle cx="14" cy="4" r="2" fill="currentColor" stroke="none"/></svg>
+        Career Navigator
+        <span style="margin-left:auto;background:var(--ibm-blue);color:white;font-size:9px;padding:1px 5px;font-weight:600">HERO</span>
+      </div>
+      <div class="nav-item" onclick="navigate('skills',this)">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 2L9.5 6h4l-3.3 2.4 1.3 4L8 10 4.5 12.4l1.3-4L2.5 6h4z"/></svg>
+        Skill Intelligence
+      </div>
+      <div class="nav-item" onclick="navigate('promotion',this)">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 2v12M4 6l4-4 4 4"/><rect x="3" y="11" width="10" height="3"/></svg>
+        Promotion Readiness
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Insights</div>
+      <div class="nav-item" onclick="navigate('reports',this)">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="12" height="14"/><path d="M5 6h6M5 9h6M5 12h4"/></svg>
+        Reports &amp; Portfolio
+      </div>
+      <div class="nav-item" onclick="navigate('coach',this)">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="6" r="4"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M8 10v4M6 13h4"/></svg>
+        AI Career Coach
+      </div>
+      <div class="nav-item" onclick="navigate('sharing',this)">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="4" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="4" cy="8" r="2"/><path d="M6 7l4-2M6 9l4 2"/></svg>
+        Privacy &amp; Sharing
+      </div>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">TP</div>
+      <div>
+        <div class="user-name">Tanya Prasad</div>
+        <div class="user-role">Product Designer · IBM</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN AREA -->
+  <div id="main">
+    <!-- TOPBAR -->
+    <div id="topbar">
+      <div>
+        <div class="topbar-title" id="pageTitle">Dashboard</div>
+        <div class="topbar-subtitle" id="pageSubtitle">Monday, July 14, 2025</div>
+      </div>
+      <div class="topbar-spacer"></div>
+      <div class="topbar-search">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="var(--ibm-gray-50)" stroke-width="1.6"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M11 11l3 3"/></svg>
+        <input placeholder="Search logs, goals, skills...">
+      </div>
+      <button class="topbar-btn btn-ghost" onclick="openModal('shareModal')">↑ Share</button>
+      <button class="topbar-btn btn-primary" onclick="openModal('logModal')">+ Log Work</button>
+    </div>
+
+    <!-- CONTENT -->
+    <div id="content">
+
+      <!-- ════════════════════════════════
+           SCREEN 1 — DASHBOARD
+      ════════════════════════════════ -->
+      <div class="screen active" id="screen-dashboard">
+        <div class="banner banner-warn">
+          <span>⏰</span>
+          <span><strong>You haven't logged any work in 3 days.</strong> Your last entry was July 11. A quick log now keeps your impact story current.</span>
+          <span style="margin-left:auto;cursor:pointer;color:var(--ibm-blue);font-weight:500" onclick="openModal('logModal')">Log now →</span>
+        </div>
+
+        <!-- KPI Row -->
+        <div class="grid-4 mb-16">
+          <div class="card card-sm">
+            <div class="card-title">Career Readiness</div>
+            <div class="score-ring-wrap">
+              <div class="score-ring">
+                <svg width="90" height="90" viewBox="0 0 90 90">
+                  <circle cx="45" cy="45" r="38" fill="none" stroke="#e0e0e0" stroke-width="7"/>
+                  <circle cx="45" cy="45" r="38" fill="none" stroke="#0f62fe" stroke-width="7" stroke-dasharray="238.8" stroke-dashoffset="66.5" stroke-linecap="round"/>
+                </svg>
+                <div class="score-ring-text"><div class="score-ring-val">72</div><div class="score-ring-lbl">/ 100</div></div>
+              </div>
+              <div>
+                <div class="card-trend">▲ +5 this month</div>
+                <div class="text-xs text-muted mt-4">Director track</div>
+              </div>
+            </div>
+          </div>
+          <div class="card card-sm">
+            <div class="card-title">Impact Score</div>
+            <div class="card-value">84</div>
+            <div class="card-trend">▲ +12 vs last quarter</div>
+            <div class="text-xs text-muted mt-4">Based on 47 logged entries</div>
+          </div>
+          <div class="card card-sm">
+            <div class="card-title">Goal Alignment</div>
+            <div class="card-value">5<span style="font-size:16px;color:var(--ibm-gray-50)">/6</span></div>
+            <div class="card-trend">1 goal needs attention</div>
+            <div class="text-xs text-muted mt-4">SuccessFactors Q3 goals</div>
+          </div>
+          <div class="card card-sm">
+            <div class="card-title">Skills Evidenced</div>
+            <div class="card-value">18</div>
+            <div class="card-trend">▲ +3 new this quarter</div>
+            <div class="text-xs text-muted mt-4">From work log history</div>
+          </div>
+        </div>
+
+        <div class="two-col mb-16">
+          <!-- Work Activity -->
+          <div class="card">
+            <div class="section-header">Work Activity — Last 90 Days <a onclick="navigate('worklog', document.querySelector('[onclick*=worklog]'))">View all →</a></div>
+            <div class="chart-placeholder">
+              <div class="chart-bars">
+                <div class="chart-bar" style="height:45%;background:var(--ibm-blue);opacity:0.5"></div>
+                <div class="chart-bar" style="height:70%;background:var(--ibm-blue);opacity:0.5"></div>
+                <div class="chart-bar" style="height:55%;background:var(--ibm-blue);opacity:0.5"></div>
+                <div class="chart-bar" style="height:80%;background:var(--ibm-blue);opacity:0.7"></div>
+                <div class="chart-bar" style="height:40%;background:var(--ibm-blue);opacity:0.5"></div>
+                <div class="chart-bar" style="height:90%;background:var(--ibm-blue)"></div>
+                <div class="chart-bar" style="height:65%;background:var(--ibm-blue);opacity:0.7"></div>
+                <div class="chart-bar" style="height:75%;background:var(--ibm-blue);opacity:0.7"></div>
+                <div class="chart-bar" style="height:50%;background:var(--ibm-blue);opacity:0.5"></div>
+                <div class="chart-bar" style="height:85%;background:var(--ibm-blue)"></div>
+                <div class="chart-bar" style="height:60%;background:var(--ibm-blue);opacity:0.6"></div>
+                <div class="chart-bar" style="height:95%;background:var(--ibm-blue)"></div>
+              </div>
+            </div>
+            <div class="flex mt-12" style="gap:16px">
+              <div class="text-xs text-muted"><strong style="color:var(--ibm-gray-100)">47</strong> entries logged</div>
+              <div class="text-xs text-muted"><strong style="color:var(--ibm-gray-100)">8</strong> projects</div>
+              <div class="text-xs text-muted"><strong style="color:var(--ibm-gray-100)">18</strong> unique skills</div>
+            </div>
+          </div>
+
+          <!-- AI Recommendations -->
+          <div class="card">
+            <div class="section-header">
+              <span>AI Recommendations <span class="ai-chip">✦ watsonx</span></span>
+            </div>
+            <div class="list-item">
+              <div class="list-dot" style="background:var(--ibm-blue)"></div>
+              <div class="list-item-content">
+                <div class="list-item-title">Seek a cross-org leadership opportunity</div>
+                <div class="list-item-sub">Your "influence" competency is partial for Director. Leading a cross-team initiative would create direct evidence.</div>
+                <div class="list-item-meta" style="color:var(--ibm-blue)">→ Addresses: Leadership gap · Q3 priority</div>
+              </div>
+            </div>
+            <div class="list-item">
+              <div class="list-dot" style="background:var(--ibm-green)"></div>
+              <div class="list-item-content">
+                <div class="list-item-title">Log your SuccessFactors Goal 3 activity</div>
+                <div class="list-item-sub">"Drive AI product strategy" has zero logged entries this quarter. It's flagged as at-risk.</div>
+                <div class="list-item-meta" style="color:var(--ibm-green)">→ Quick win · Log now</div>
+              </div>
+            </div>
+            <div class="list-item">
+              <div class="list-dot" style="background:var(--ibm-purple)"></div>
+              <div class="list-item-content">
+                <div class="list-item-title">Complete IBM SkillsBuild: Executive Presence</div>
+                <div class="list-item-sub">Recommended based on your Director gap analysis. Estimated 4 hours.</div>
+                <div class="list-item-meta" style="color:var(--ibm-purple)">→ Career roadmap milestone Q3</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="two-col mb-16">
+          <!-- Recent Logs -->
+          <div class="card">
+            <div class="section-header">Recent Work Logs <a onclick="navigate('worklog', document.querySelector('[onclick*=worklog]'))">View all →</a></div>
+            <div class="timeline-item">
+              <div class="timeline-dot" style="background:var(--ibm-blue)">W</div>
+              <div class="timeline-content">
+                <div class="timeline-date">Jul 11, 2025</div>
+                <div class="timeline-title">watsonx dashboard design sprint retrospective</div>
+                <div class="timeline-body">Facilitated retro for 8-person squad. Identified 3 process improvements for Q3.</div>
+                <div class="timeline-tags">
+                  <span class="tag tag-teal">Facilitation</span><span class="tag tag-blue">Leadership</span>
+                  <span class="ai-chip" style="font-size:9px">✦ AI derived: 4 skills</span>
+                </div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot" style="background:var(--ibm-purple)">D</div>
+              <div class="timeline-content">
+                <div class="timeline-date">Jul 9, 2025</div>
+                <div class="timeline-title">Design system component review with Carbon team</div>
+                <div class="timeline-body">Reviewed 6 new components for accessibility compliance. Filed 4 feedback issues.</div>
+                <div class="timeline-tags">
+                  <span class="tag tag-purple">Design Systems</span><span class="tag tag-green">Accessibility</span>
+                </div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot" style="background:var(--ibm-teal)">S</div>
+              <div class="timeline-content">
+                <div class="timeline-date">Jul 7, 2025</div>
+                <div class="timeline-title">SuccessFactors integration stakeholder alignment</div>
+                <div class="timeline-body">Presented Clarity prototype to VP of Design. Received green light for Q3 hackathon submission.</div>
+                <div class="timeline-tags">
+                  <span class="tag tag-yellow">Executive Presence</span><span class="tag tag-teal">Strategy</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Goal Alignment Quick View -->
+          <div class="card">
+            <div class="section-header">Goal Alignment <a onclick="navigate('goals', document.querySelector('[onclick*=goals]'))">View all →</a></div>
+            <div class="progress-wrap">
+              <div class="progress-label"><span>Deliver Q3 watsonx UX milestones</span><span style="color:var(--ibm-green)">88%</span></div>
+              <div class="progress-bar"><div class="progress-fill progress-fill-green" style="width:88%"></div></div>
+            </div>
+            <div class="progress-wrap">
+              <div class="progress-label"><span>Build cross-functional influence</span><span style="color:var(--ibm-blue)">62%</span></div>
+              <div class="progress-bar"><div class="progress-fill progress-fill-blue" style="width:62%"></div></div>
+            </div>
+            <div class="progress-wrap">
+              <div class="progress-label"><span>Drive AI product strategy</span><span style="color:var(--ibm-red)">8%</span></div>
+              <div class="progress-bar"><div class="progress-fill progress-fill-red" style="width:8%"></div></div>
+              <div class="text-xs" style="color:var(--ibm-red);margin-top:2px">⚠ Deviation flagged — no recent log entries</div>
+            </div>
+            <div class="progress-wrap">
+              <div class="progress-label"><span>Mentor 2 junior designers</span><span style="color:var(--ibm-green)">100%</span></div>
+              <div class="progress-bar"><div class="progress-fill progress-fill-green" style="width:100%"></div></div>
+            </div>
+            <div class="progress-wrap">
+              <div class="progress-label"><span>Complete IBM Design Thinking cert</span><span style="color:var(--ibm-yellow)">45%</span></div>
+              <div class="progress-bar"><div class="progress-fill progress-fill-yellow" style="width:45%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Career Dream snippet -->
+        <div class="card" style="border-left:3px solid var(--ibm-purple)">
+          <div class="flex items-center justify-between mb-12">
+            <div class="flex items-center gap-8">
+              <span style="font-size:20px">✦</span>
+              <div>
+                <div class="font-semibold" style="font-size:14px">Your Career Dream</div>
+                <div class="text-xs text-muted">Director of Product Design · 3 years · Private</div>
+              </div>
+            </div>
+            <button class="topbar-btn btn-ghost" style="font-size:12px" onclick="navigate('career', document.querySelector('[onclick*=career]'))">View Full Roadmap →</button>
+          </div>
+          <div class="grid-3">
+            <div>
+              <div class="text-xs text-muted mb-4">Gap status</div>
+              <div class="flex" style="gap:6px;flex-wrap:wrap">
+                <span class="tag tag-green">3 evidenced</span>
+                <span class="tag tag-yellow">2 partial</span>
+                <span class="tag tag-red">1 missing</span>
+              </div>
+            </div>
+            <div>
+              <div class="text-xs text-muted mb-4">Next milestone</div>
+              <div class="text-sm font-medium">Lead an org-wide design initiative</div>
+              <div class="text-xs text-muted">Target: Q4 2025</div>
+            </div>
+            <div>
+              <div class="text-xs text-muted mb-4">This quarter's action</div>
+              <div class="text-sm font-medium">Seek stretch: design systems governance</div>
+              <div class="tag tag-yellow" style="margin-top:4px">In progress</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════
+           SCREEN 2 — WORK LOG
+      ════════════════════════════════ -->
+      <div class="screen" id="screen-worklog">
+        <div class="page-header">
+          <h1>Work Log</h1>
+          <p>47 entries across 8 projects · Last 90 days · AI-derived skills and impact on every entry</p>
+        </div>
+
+        <div class="tabs">
+          <div class="tab active">Timeline</div>
+          <div class="tab">By Project</div>
+          <div class="tab">By Skill</div>
+          <div class="tab">By Goal</div>
+        </div>
+
+        <div class="two-col">
+          <div>
+            <!-- Entry 1 -->
+            <div class="card mb-12">
+              <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center gap-8">
+                  <div style="width:8px;height:8px;border-radius:50%;background:var(--ibm-blue);flex-shrink:0"></div>
+                  <span class="text-xs text-muted">Jul 11, 2025 · Thursday</span>
+                  <span class="tag tag-gray">Manual</span>
+                </div>
+                <div class="ai-chip">✦ AI enriched</div>
+              </div>
+              <div class="font-semibold mb-4" style="font-size:14px">watsonx dashboard design sprint retrospective</div>
+              <p class="text-sm" style="color:var(--ibm-gray-70);margin-bottom:10px">Facilitated retrospective for 8-person product squad. Identified 3 process improvements, documented action items, and shared async with broader design team.</p>
+              <div class="flex" style="gap:6px;flex-wrap:wrap;margin-bottom:10px">
+                <span class="tag tag-teal">Facilitation</span>
+                <span class="tag tag-blue">Team Leadership</span>
+                <span class="tag tag-purple">Process Improvement</span>
+              </div>
+              <div style="background:var(--ibm-gray-10);padding:10px 12px;border:1px solid var(--ibm-gray-20)">
+                <div class="text-xs text-muted mb-4">✦ AI-derived impact</div>
+                <p class="text-sm" style="font-style:italic;color:var(--ibm-gray-70)">"Led cross-functional retrospective for 8-person squad, surfacing 3 process improvements to accelerate Q3 delivery."</p>
+                <div class="text-xs text-muted mt-4">Goal: <span class="text-blue">Build cross-functional influence</span> · <span class="text-green">Confirmed ✓</span></div>
+              </div>
+            </div>
+
+            <!-- Entry 2 -->
+            <div class="card mb-12">
+              <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center gap-8">
+                  <div style="width:8px;height:8px;border-radius:50%;background:var(--ibm-purple);flex-shrink:0"></div>
+                  <span class="text-xs text-muted">Jul 9, 2025 · Tuesday</span>
+                  <span class="tag tag-gray">Manual</span>
+                </div>
+                <div class="ai-chip">✦ AI enriched</div>
+              </div>
+              <div class="font-semibold mb-4" style="font-size:14px">Carbon Design System accessibility review</div>
+              <p class="text-sm" style="color:var(--ibm-gray-70);margin-bottom:10px">Reviewed 6 proposed Carbon components for WCAG AA compliance. Filed 4 detailed feedback issues with reproduction steps. Two components approved, 4 returned for revision.</p>
+              <div class="flex" style="gap:6px;flex-wrap:wrap;margin-bottom:10px">
+                <span class="tag tag-purple">Design Systems</span>
+                <span class="tag tag-green">Accessibility</span>
+                <span class="tag tag-blue">UX Quality</span>
+              </div>
+              <div style="background:var(--ibm-gray-10);padding:10px 12px;border:1px solid var(--ibm-gray-20)">
+                <div class="text-xs text-muted mb-4">✦ AI-derived impact</div>
+                <p class="text-sm" style="font-style:italic;color:var(--ibm-gray-70)">"Reviewed 6 Carbon components for WCAG AA compliance, maintaining design system quality standards and reducing accessibility debt."</p>
+                <div class="text-xs text-muted mt-4">Metrics: <span class="font-medium">4 issues filed · 2 approved · 4 revisions</span></div>
+                <div class="text-xs text-muted mt-2">Goal: <span class="text-blue">Deliver Q3 watsonx UX milestones</span> · <span class="text-green">Confirmed ✓</span></div>
+              </div>
+            </div>
+
+            <!-- Entry 3 — unconfirmed -->
+            <div class="card mb-12" style="border-left:3px solid var(--ibm-yellow)">
+              <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center gap-8">
+                  <div style="width:8px;height:8px;border-radius:50%;background:var(--ibm-yellow);flex-shrink:0"></div>
+                  <span class="text-xs text-muted">Jul 7, 2025 · Sunday</span>
+                  <span class="tag tag-yellow">Needs review</span>
+                </div>
+                <div class="ai-chip">✦ AI enriched</div>
+              </div>
+              <div class="font-semibold mb-4" style="font-size:14px">VP stakeholder presentation — Clarity prototype</div>
+              <p class="text-sm" style="color:var(--ibm-gray-70);margin-bottom:10px">Presented Clarity Dashboard prototype to VP of IBM Design. Received positive feedback and approval to submit to watsonx Challenge.</p>
+              <div style="background:var(--ibm-yellow-light);padding:10px 12px;border:1px solid var(--ibm-yellow)">
+                <div class="text-xs mb-4" style="color:#825200">✦ AI suggests — please confirm or edit</div>
+                <div class="grid-3" style="gap:8px">
+                  <div>
+                    <div class="text-xs text-muted mb-2">Skills</div>
+                    <div class="flex" style="gap:4px;flex-direction:column">
+                      <span class="tag tag-yellow">Executive Presence</span>
+                      <span class="tag tag-yellow">Strategic Communication</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="text-xs text-muted mb-2">Impact</div>
+                    <p class="text-sm" style="font-style:italic;">"Secured VP buy-in for AI career platform, enabling hackathon submission."</p>
+                  </div>
+                  <div>
+                    <div class="flex" style="gap:6px;flex-direction:column;margin-top:16px">
+                      <button class="topbar-btn btn-primary" style="font-size:11px;padding:5px 10px">✓ Confirm</button>
+                      <button class="topbar-btn btn-ghost" style="font-size:11px;padding:5px 10px">Edit</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right panel — summary -->
+          <div>
+            <div class="card mb-12">
+              <div class="card-title">This Month's Skills</div>
+              <div class="progress-wrap mt-8">
+                <div class="progress-label"><span>UX Design</span><span>12 entries</span></div>
+                <div class="progress-bar"><div class="progress-fill progress-fill-blue" style="width:85%"></div></div>
+              </div>
+              <div class="progress-wrap">
+                <div class="progress-label"><span>Stakeholder Mgmt</span><span>9 entries</span></div>
+                <div class="progress-bar"><div class="progress-fill progress-fill-teal" style="width:65%"></div></div>
+              </div>
+              <div class="progress-wrap">
+                <div class="progress-label"><span>Leadership</span><span>7 entries</span></div>
+                <div class="progress-bar"><div class="progress-fill progress-fill-purple" style="width:50%"></div></div>
+              </div>
+              <div class="progress-wrap">
+                <div class="progress-label"><span>Strategy</span><span>5 entries</span></div>
+                <div class="progress-bar"><div class="progress-fill progress-fill-yellow" style="width:36%"></div></div>
+              </div>
+              <div class="progress-wrap">
+                <div class="progress-label"><span>Accessibility</span><span>4 entries</span></div>
+                <div class="progress-bar"><div class="progress-fill progress-fill-green" style="width:28%"></div></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">AI Narrative — This Quarter</div>
+              <div style="background:var(--ibm-gray-10);padding:12px;border:1px solid var(--ibm-gray-20)">
+                <div class="ai-chip mb-8">✦ watsonx summary</div>
+                <p class="text-sm" style="color:var(--ibm-gray-70);line-height:1.6;font-style:italic">"This quarter Tanya has demonstrated strong UX execution and is growing in stakeholder leadership. The VP presentation and retrospective facilitation mark a clear progression toward Director-level scope. The main gap remains AI strategy contribution — no logged entries support that goal yet."</p>
+              </div>
+              <button class="topbar-btn btn-ghost mt-12" style="width:100%;justify-content:center;font-size:12px" onclick="navigate('reports', document.querySelector('[onclick*=reports]'))">Generate Performance Summary →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════
+           SCREEN 3 — GOALS & ALIGNMENT
+      ════════════════════════════════ -->
+      <div class="screen" id="screen-goals">
+        <div class="page-header">
+          <h1>Goals &amp; Alignment</h1>
+          <p>SuccessFactors Q3 2025 goals · Mocked import · AI maps your work logs to each goal automatically</p>
+        </div>
+
+        <div class="banner banner-warn">
+          <span>⚠</span>
+          <span><strong>1 goal is at risk.</strong> "Drive AI product strategy" has no logged work this quarter. Log an entry to reduce the deviation flag.</span>
+          <span style="margin-left:auto;cursor:pointer;color:var(--ibm-blue);font-weight:500" onclick="openModal('logModal')">Log now →</span>
+        </div>
+
+        <div class="goal-card">
+          <div class="goal-card-header">
+            <div class="goal-card-icon" style="background:var(--ibm-green-light)">🎯</div>
+            <div style="flex:1">
+              <div class="goal-card-title">Deliver Q3 watsonx UX milestones</div>
+              <div class="goal-card-org">Org Goal → Vertical Goal → Individual · Source: SuccessFactors</div>
+            </div>
+            <span class="badge badge-green">On track</span>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-label"><span>Evidence coverage</span><span style="color:var(--ibm-green)">88%</span></div>
+            <div class="progress-bar"><div class="progress-fill progress-fill-green" style="width:88%"></div></div>
+          </div>
+          <div class="flex" style="gap:6px;flex-wrap:wrap;margin-bottom:8px">
+            <span class="tag tag-blue">22 log entries</span>
+            <span class="tag tag-green">AI-mapped</span>
+            <span class="tag tag-teal">Design · Research · Stakeholder</span>
+          </div>
+          <p class="text-xs text-muted">Recent: "watsonx dashboard redesign shipped", "accessibility review completed", "design handoff to engineering"</p>
+        </div>
+
+        <div class="goal-card">
+          <div class="goal-card-header">
+            <div class="goal-card-icon" style="background:var(--ibm-blue-light)">🤝</div>
+            <div style="flex:1">
+              <div class="goal-card-title">Build cross-functional influence</div>
+              <div class="goal-card-org">Individual Goal · Source: Manual import</div>
+            </div>
+            <span class="badge badge-yellow">Progressing</span>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-label"><span>Evidence coverage</span><span style="color:var(--ibm-blue)">62%</span></div>
+            <div class="progress-bar"><div class="progress-fill progress-fill-blue" style="width:62%"></div></div>
+          </div>
+          <div class="flex" style="gap:6px;flex-wrap:wrap;margin-bottom:8px">
+            <span class="tag tag-blue">9 log entries</span>
+            <span class="tag tag-green">AI-mapped</span>
+            <span class="tag tag-purple">Leadership · Facilitation</span>
+          </div>
+          <p class="text-xs text-muted">Recent: "Sprint retro facilitation", "Carbon team review", "VP presentation"</p>
+        </div>
+
+        <div class="goal-card" style="border-left:3px solid var(--ibm-red)">
+          <div class="goal-card-header">
+            <div class="goal-card-icon" style="background:var(--ibm-red-light)">🧠</div>
+            <div style="flex:1">
+              <div class="goal-card-title">Drive AI product strategy</div>
+              <div class="goal-card-org">Org Goal → Individual · Source: SuccessFactors</div>
+            </div>
+            <span class="badge badge-red">⚠ Deviation</span>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-label"><span>Evidence coverage</span><span style="color:var(--ibm-red)">8%</span></div>
+            <div class="progress-bar"><div class="progress-fill progress-fill-red" style="width:8%"></div></div>
+          </div>
+          <div class="flex" style="gap:6px;flex-wrap:wrap;margin-bottom:8px">
+            <span class="tag tag-red">1 log entry</span>
+            <span class="tag tag-yellow">Needs work</span>
+          </div>
+          <p class="text-xs" style="color:var(--ibm-red)">No entries mapped to this goal in the last 60 days. Consider logging AI research, strategy discussions, or competitive analysis activities.</p>
+          <button class="topbar-btn btn-primary mt-8" style="font-size:12px" onclick="openModal('logModal')">+ Log entry for this goal</button>
+        </div>
+
+        <div class="goal-card">
+          <div class="goal-card-header">
+            <div class="goal-card-icon" style="background:var(--ibm-green-light)">👩‍🏫</div>
+            <div style="flex:1">
+              <div class="goal-card-title">Mentor 2 junior designers</div>
+              <div class="goal-card-org">Individual Goal · Source: Manual</div>
+            </div>
+            <span class="badge badge-green">Complete</span>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-label"><span>Evidence coverage</span><span style="color:var(--ibm-green)">100%</span></div>
+            <div class="progress-bar"><div class="progress-fill progress-fill-green" style="width:100%"></div></div>
+          </div>
+          <div class="flex" style="gap:6px;flex-wrap:wrap">
+            <span class="tag tag-green">6 log entries</span>
+            <span class="tag tag-green">Goal met ✓</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════
+           SCREEN 4 — CAREER NAVIGATOR
+      ════════════════════════════════ -->
+      <div class="screen" id="screen-career">
+        <div class="page-header">
+          <h1>Career Navigator <span class="ai-chip">✦ watsonx AI</span></h1>
+          <p>Your private career roadmap — visible only to you unless explicitly shared</p>
+        </div>
+
+        <!-- Step indicator -->
+        <div class="steps-bar">
+          <div class="step-node">
+            <div class="step-circle step-circle-done">✓</div>
+            <div class="step-label" style="color:var(--ibm-green)">Dream</div>
+          </div>
+          <div class="step-line step-line-done"></div>
+          <div class="step-node">
+            <div class="step-circle step-circle-done">✓</div>
+            <div class="step-label" style="color:var(--ibm-green)">Profile</div>
+          </div>
+          <div class="step-line step-line-done"></div>
+          <div class="step-node">
+            <div class="step-circle step-circle-active">3</div>
+            <div class="step-label step-label-active">Gap Analysis</div>
+          </div>
+          <div class="step-line"></div>
+          <div class="step-node">
+            <div class="step-circle step-circle-pending">4</div>
+            <div class="step-label step-label-pending">Roadmap</div>
+          </div>
+          <div class="step-line"></div>
+          <div class="step-node">
+            <div class="step-circle step-circle-pending">5</div>
+            <div class="step-label step-label-pending">Actions</div>
+          </div>
+        </div>
+
+        <div class="highlight-box">
+          <p>🎯 <strong>Your dream:</strong> Director of Product Design at IBM · <strong>Timeframe:</strong> 3 years · <strong>Track:</strong> People leadership + IC excellence · <a style="color:var(--ibm-blue);cursor:pointer">Edit</a></p>
+        </div>
+
+        <div class="two-col mb-20">
+          <!-- Current profile -->
+          <div class="card">
+            <div class="section-header">Your Current Profile <span class="ai-chip">✦ Derived from 47 logs</span></div>
+            <div class="text-xs text-muted mb-12">Based on your work log history — not a self-assessment form</div>
+            <div class="progress-wrap">
+              <div class="progress-label"><span>UX Craft &amp; Execution</span><span style="color:var(--ibm-green)">Strong</span></div>
+              <div class="progress-bar"><div class="progress-fill progress-fill-green" style="width:88%"></div></div>
+            </div>
+            <div class="progress-wrap">
+              <div class="progress-label"><span>Stakeholder Management</span><span style="color:var(--ibm-blue)">Solid</span></div>
+              <div class="progress-bar"><div class="progress-fill progress-fill-blue" style="width:72%"></div></div>
+            </div>
+            <div class="progress-wrap">
+              <div class="progress-label"><span>Cross-team Influence</span><span style="color:var(--ibm-yellow)">Partial</span></div>
+              <div class="progress-bar"><div class="progress-fill progress-fill-yellow" style="width:50%"></div></div>
+            </div>
+            <div class="progress-wrap">
+              <div class="progress-label"><span>People Leadership</span><span style="color:var(--ibm-yellow)">Partial</span></div>
+              <div class="progress-bar"><div class="progress-fill progress-fill-yellow" style="width:42%"></div></div>
+            </div>
+            <div class="progress-wrap">
+              <div class="progress-label"><span>Business &amp; Strategy</span><span style="color:var(--ibm-red)">Early</span></div>
+              <div class="progress-bar"><div class="progress-fill progress-fill-red" style="width:22%"></div></div>
+            </div>
+            <div class="progress-wrap">
+              <div class="progress-label"><span>Executive Presence</span><span style="color:var(--ibm-yellow)">Growing</span></div>
+              <div class="progress-bar"><div class="progress-fill progress-fill-yellow" style="width:48%"></div></div>
+            </div>
+          </div>
+
+          <!-- Target profile -->
+          <div class="card">
+            <div class="section-header">Director of Product Design — Expected Profile <span class="tag tag-gray">IBM Competency Ladder</span></div>
+            <div class="text-xs text-muted mb-12">Seeded competency framework: IC → Senior → Staff → Director → VP</div>
+            <div class="gap-row">
+              <div class="gap-skill">UX Craft &amp; Execution</div>
+              <div class="gap-bar-wrap"><div class="progress-bar"><div class="progress-fill progress-fill-green" style="width:90%"></div></div></div>
+              <div class="gap-status"><span class="tag tag-green">Evidenced</span></div>
+            </div>
+            <div class="gap-row">
+              <div class="gap-skill">Stakeholder Management</div>
+              <div class="gap-bar-wrap"><div class="progress-bar"><div class="progress-fill progress-fill-green" style="width:72%"></div></div></div>
+              <div class="gap-status"><span class="tag tag-green">Evidenced</span></div>
+            </div>
+            <div class="gap-row">
+              <div class="gap-skill">Cross-team Influence</div>
+              <div class="gap-bar-wrap"><div class="progress-bar"><div class="progress-fill progress-fill-yellow" style="width:50%"></div></div></div>
+              <div class="gap-status"><span class="tag tag-yellow">Partial</span></div>
+            </div>
+            <div class="gap-row">
+              <div class="gap-skill">People Leadership</div>
+              <div class="gap-bar-wrap"><div class="progress-bar"><div class="progress-fill progress-fill-yellow" style="width:42%"></div></div></div>
+              <div class="gap-status"><span class="tag tag-yellow">Partial</span></div>
+            </div>
+            <div class="gap-row">
+              <div class="gap-skill">Business &amp; Strategy</div>
+              <div class="gap-bar-wrap"><div class="progress-bar"><div class="progress-fill progress-fill-red" style="width:22%"></div></div></div>
+              <div class="gap-status"><span class="tag tag-red">Missing</span></div>
+            </div>
+            <div class="gap-row">
+              <div class="gap-skill">Executive Presence</div>
+              <div class="gap-bar-wrap"><div class="progress-bar"><div class="progress-fill progress-fill-yellow" style="width:48%"></div></div></div>
+              <div class="gap-status"><span class="tag tag-yellow">Partial</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Roadmap -->
+        <div class="card mb-20">
+          <div class="section-header">3-Year Milestone Roadmap <span class="ai-chip">✦ watsonx generated</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:4px">
+            <div style="border-top:3px solid var(--ibm-blue);padding-top:12px">
+              <div class="text-xs text-muted mb-4">YEAR 1 · 2025–2026</div>
+              <div class="font-semibold mb-8" style="font-size:13px">Expand scope &amp; influence</div>
+              <div class="list-item" style="padding:6px 0">
+                <div class="list-dot" style="background:var(--ibm-blue)"></div>
+                <div class="list-item-content">
+                  <div class="list-item-title" style="font-size:12px">Lead an org-wide design initiative (e.g. design system governance)</div>
+                </div>
+              </div>
+              <div class="list-item" style="padding:6px 0">
+                <div class="list-dot" style="background:var(--ibm-blue)"></div>
+                <div class="list-item-content">
+                  <div class="list-item-title" style="font-size:12px">Formally mentor 3+ designers with structured 1:1s</div>
+                </div>
+              </div>
+              <div class="list-item" style="padding:6px 0">
+                <div class="list-dot" style="background:var(--ibm-blue)"></div>
+                <div class="list-item-content">
+                  <div class="list-item-title" style="font-size:12px">Present at IBM Design internal conference</div>
+                </div>
+              </div>
+            </div>
+            <div style="border-top:3px solid var(--ibm-purple);padding-top:12px">
+              <div class="text-xs text-muted mb-4">YEAR 2 · 2026–2027</div>
+              <div class="font-semibold mb-8" style="font-size:13px">Build leadership presence</div>
+              <div class="list-item" style="padding:6px 0">
+                <div class="list-dot" style="background:var(--ibm-purple)"></div>
+                <div class="list-item-content">
+                  <div class="list-item-title" style="font-size:12px">Drive business case for a design investment (budget ownership)</div>
+                </div>
+              </div>
+              <div class="list-item" style="padding:6px 0">
+                <div class="list-dot" style="background:var(--ibm-purple)"></div>
+                <div class="list-item-content">
+                  <div class="list-item-title" style="font-size:12px">Own a multi-product design domain with 2–3 reports</div>
+                </div>
+              </div>
+              <div class="list-item" style="padding:6px 0">
+                <div class="list-dot" style="background:var(--ibm-purple)"></div>
+                <div class="list-item-content">
+                  <div class="list-item-title" style="font-size:12px">Complete IBM Executive Leadership Program</div>
+                </div>
+              </div>
+            </div>
+            <div style="border-top:3px solid var(--ibm-green);padding-top:12px">
+              <div class="text-xs text-muted mb-4">YEAR 3 · 2027–2028</div>
+              <div class="font-semibold mb-8" style="font-size:13px">Director-ready</div>
+              <div class="list-item" style="padding:6px 0">
+                <div class="list-dot" style="background:var(--ibm-green)"></div>
+                <div class="list-item-content">
+                  <div class="list-item-title" style="font-size:12px">Lead design strategy for a business unit (P&L exposure)</div>
+                </div>
+              </div>
+              <div class="list-item" style="padding:6px 0">
+                <div class="list-dot" style="background:var(--ibm-green)"></div>
+                <div class="list-item-content">
+                  <div class="list-item-title" style="font-size:12px">Establish design team OKRs linked to org-level revenue goals</div>
+                </div>
+              </div>
+              <div class="list-item" style="padding:6px 0">
+                <div class="list-dot" style="background:var(--ibm-green)"></div>
+                <div class="list-item-content">
+                  <div class="list-item-title" style="font-size:12px">Internal sponsorship from a VP confirmed</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action plan -->
+        <div class="card">
+          <div class="section-header">Action Plan — This Quarter <span class="ai-chip">✦ watsonx generated</span></div>
+          <div class="three-col">
+            <div>
+              <div class="text-xs text-muted mb-8" style="text-transform:uppercase;letter-spacing:0.06em">Short-term (Q3 2025)</div>
+              <div class="list-item" style="padding:8px 0">
+                <div class="list-dot" style="background:var(--ibm-yellow)"></div>
+                <div class="list-item-content">
+                  <div class="list-item-title" style="font-size:12.5px">Volunteer for design systems governance working group</div>
+                  <div class="list-item-meta">Addresses: Cross-team Influence gap</div>
+                  <span class="tag tag-yellow">In progress</span>
+                </div>
+              </div>
+              <div class="list-item" style="padding:8px 0">
+                <div class="list-dot" style="background:var(--ibm-gray-30)"></div>
+                <div class="list-item-content">
+                  <div class="list-item-title" style="font-size:12.5px">Start structured mentorship with 1 junior designer</div>
+                  <div class="list-item-meta">Addresses: People Leadership gap</div>
+                  <span class="tag tag-gray">Not started</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="text-xs text-muted mb-8" style="text-transform:uppercase;letter-spacing:0.06em">Mid-term (H2 2025)</div>
+              <div class="list-item" style="padding:8px 0">
+                <div class="list-dot" style="background:var(--ibm-gray-30)"></div>
+                <div class="list-item-content">
+                  <div class="list-item-title" style="font-size:12.5px">Propose and lead a design-strategy Q4 initiative</div>
+                  <div class="list-item-meta">Addresses: Business &amp; Strategy gap</div>
+                  <span class="tag tag-gray">Planned</span>
+                </div>
+              </div>
+              <div class="list-item" style="padding:8px 0">
+                <div class="list-dot" style="background:var(--ibm-gray-30)"></div>
+                <div class="list-item-content">
+                  <div class="list-item-title" style="font-size:12.5px">Complete IBM SkillsBuild: Executive Presence (4h)</div>
+                  <div class="list-item-meta">IBM Skills Build course</div>
+                  <span class="tag tag-gray">Not started</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="text-xs text-muted mb-8" style="text-transform:uppercase;letter-spacing:0.06em">Long-term (2026)</div>
+              <div class="list-item" style="padding:8px 0">
+                <div class="list-dot" style="background:var(--ibm-gray-30)"></div>
+                <div class="list-item-content">
+                  <div class="list-item-title" style="font-size:12.5px">Identify and cultivate VP-level sponsor relationship</div>
+                  <div class="list-item-meta">Builds: Executive Presence · Visibility</div>
+                  <span class="tag tag-gray">Planned</span>
+                </div>
+              </div>
+              <div class="list-item" style="padding:8px 0">
+                <div class="list-dot" style="background:var(--ibm-gray-30)"></div>
+                <div class="list-item-content">
+                  <div class="list-item-title" style="font-size:12.5px">Apply for IBM Design Leadership Program (2026 cohort)</div>
+                  <div class="list-item-meta">Key milestone for Director promotion path</div>
+                  <span class="tag tag-gray">Planned</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════
+           SCREEN 5 — SKILL INTELLIGENCE
+      ════════════════════════════════ -->
+      <div class="screen" id="screen-skills">
+        <div class="page-header">
+          <h1>Skill Intelligence</h1>
+          <p>18 skills evidenced from 47 work log entries · Continuously updated by watsonx AI</p>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="card mb-12">
+              <div class="section-header">Skill Growth — Last 90 Days</div>
+              <div class="chart-placeholder">
+                <div class="chart-bars">
+                  <div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;justify-content:flex-end">
+                    <div style="width:100%;height:40px;background:var(--ibm-blue);opacity:0.9"></div>
+                    <div class="text-xs text-muted" style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:9px">UX Design</div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;justify-content:flex-end">
+                    <div style="width:100%;height:32px;background:var(--ibm-teal);opacity:0.9"></div>
+                    <div class="text-xs text-muted" style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:9px">Stakeholder</div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;justify-content:flex-end">
+                    <div style="width:100%;height:26px;background:var(--ibm-purple);opacity:0.9"></div>
+                    <div class="text-xs text-muted" style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:9px">Leadership</div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;justify-content:flex-end">
+                    <div style="width:100%;height:18px;background:var(--ibm-green);opacity:0.9"></div>
+                    <div class="text-xs text-muted" style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:9px">Strategy</div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;justify-content:flex-end">
+                    <div style="width:100%;height:14px;background:var(--ibm-yellow);opacity:0.9"></div>
+                    <div class="text-xs text-muted" style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:9px">Exec Presence</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="section-header">All Evidenced Skills</div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">
+                <span class="tag tag-blue" style="font-size:12px;padding:5px 10px">UX Design · 22</span>
+                <span class="tag tag-teal" style="font-size:12px;padding:5px 10px">Stakeholder Mgmt · 14</span>
+                <span class="tag tag-purple" style="font-size:12px;padding:5px 10px">Facilitation · 9</span>
+                <span class="tag tag-green" style="font-size:12px;padding:5px 10px">Accessibility · 7</span>
+                <span class="tag tag-yellow" style="font-size:12px;padding:5px 10px">Exec Presence · 5</span>
+                <span class="tag tag-teal" style="font-size:12px;padding:5px 10px">Design Systems · 8</span>
+                <span class="tag tag-blue" style="font-size:12px;padding:5px 10px">Communication · 11</span>
+                <span class="tag tag-purple" style="font-size:12px;padding:5px 10px">Mentorship · 6</span>
+                <span class="tag tag-red" style="font-size:12px;padding:5px 10px">AI Strategy · 1 ⚠</span>
+                <span class="tag tag-gray" style="font-size:12px;padding:5px 10px">Research · 4</span>
+                <span class="tag tag-green" style="font-size:12px;padding:5px 10px">Prototyping · 9</span>
+                <span class="tag tag-gray" style="font-size:12px;padding:5px 10px">Figma · 12</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="card mb-12">
+              <div class="section-header">New Skills This Quarter <span class="ai-chip">✦ AI detected</span></div>
+              <div class="list-item">
+                <div class="list-dot" style="background:var(--ibm-green)"></div>
+                <div class="list-item-content">
+                  <div class="list-item-title">Executive Presence</div>
+                  <div class="list-item-sub">Evidenced by VP stakeholder presentation and cross-org facilitation sessions.</div>
+                  <div class="list-item-meta">3 entries · New this quarter</div>
+                </div>
+                <span class="tag tag-green" style="margin-left:auto">New ↑</span>
+              </div>
+              <div class="list-item">
+                <div class="list-dot" style="background:var(--ibm-blue)"></div>
+                <div class="list-item-content">
+                  <div class="list-item-title">Team Leadership</div>
+                  <div class="list-item-sub">Evidenced by sprint retrospective facilitation and design critique sessions.</div>
+                  <div class="list-item-meta">4 entries · Growing</div>
+                </div>
+                <span class="tag tag-blue" style="margin-left:auto">Growing ↑</span>
+              </div>
+              <div class="list-item">
+                <div class="list-dot" style="background:var(--ibm-teal)"></div>
+                <div class="list-item-content">
+                  <div class="list-item-title">Process Improvement</div>
+                  <div class="list-item-sub">Evidenced by retro outcomes documentation and workflow redesign for design handoff.</div>
+                  <div class="list-item-meta">2 entries · New this quarter</div>
+                </div>
+                <span class="tag tag-teal" style="margin-left:auto">New ↑</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="section-header">Skills Needed for Director <span class="tag tag-red">Gaps</span></div>
+              <div class="list-item">
+                <div class="list-dot" style="background:var(--ibm-red)"></div>
+                <div class="list-item-content">
+                  <div class="list-item-title">Business Strategy</div>
+                  <div class="list-item-sub">Required: budget ownership, business case development, P&L exposure.</div>
+                  <div class="list-item-meta">Current evidence: 1 entry (weak). Needs 8–10 entries of business-facing work.</div>
+                </div>
+                <span class="tag tag-red" style="margin-left:auto">Missing</span>
+              </div>
+              <div class="list-item">
+                <div class="list-dot" style="background:var(--ibm-yellow)"></div>
+                <div class="list-item-content">
+                  <div class="list-item-title">People Management</div>
+                  <div class="list-item-sub">Required: formal direct reports, performance reviews, hiring involvement.</div>
+                  <div class="list-item-meta">Current: informal mentorship only. Partial evidence.</div>
+                </div>
+                <span class="tag tag-yellow" style="margin-left:auto">Partial</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════
+           SCREEN 6 — PROMOTION READINESS
+      ════════════════════════════════ -->
+      <div class="screen" id="screen-promotion">
+        <div class="page-header">
+          <h1>Promotion Readiness</h1>
+          <p>Senior Designer → Director of Product Design · AI-assessed from your work log history</p>
+        </div>
+        <div class="two-col mb-20">
+          <div class="card" style="text-align:center;padding:32px">
+            <div class="text-xs text-muted mb-8" style="text-transform:uppercase;letter-spacing:0.06em">Overall Readiness</div>
+            <div style="position:relative;width:140px;height:140px;margin:0 auto 16px">
+              <svg width="140" height="140" viewBox="0 0 140 140" style="transform:rotate(-90deg)">
+                <circle cx="70" cy="70" r="58" fill="none" stroke="#e0e0e0" stroke-width="10"/>
+                <circle cx="70" cy="70" r="58" fill="none" stroke="#0f62fe" stroke-width="10" stroke-dasharray="364.4" stroke-dashoffset="109.3" stroke-linecap="round"/>
+              </svg>
+              <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center">
+                <div style="font-size:36px;font-weight:300;line-height:1">70%</div>
+                <div style="font-size:10px;color:var(--ibm-gray-50);text-transform:uppercase;">Ready</div>
+              </div>
+            </div>
+            <div class="text-sm font-medium">Projected promotion window:</div>
+            <div style="font-size:18px;font-weight:400;color:var(--ibm-blue);margin-top:4px">Q2–Q3 2027</div>
+            <div class="text-xs text-muted mt-4">Based on current growth rate &amp; gap closure</div>
+          </div>
+          <div class="card">
+            <div class="section-header">Readiness by Dimension</div>
+            <div class="readiness-row">
+              <div class="readiness-label">UX Craft &amp; Quality</div>
+              <div class="readiness-bar"><div class="progress-bar"><div class="progress-fill progress-fill-green" style="width:92%"></div></div></div>
+              <div class="readiness-score" style="color:var(--ibm-green)">92%</div>
+            </div>
+            <div class="readiness-row">
+              <div class="readiness-label">Stakeholder Influence</div>
+              <div class="readiness-bar"><div class="progress-bar"><div class="progress-fill progress-fill-blue" style="width:75%"></div></div></div>
+              <div class="readiness-score" style="color:var(--ibm-blue)">75%</div>
+            </div>
+            <div class="readiness-row">
+              <div class="readiness-label">Cross-org Leadership</div>
+              <div class="readiness-bar"><div class="progress-bar"><div class="progress-fill progress-fill-yellow" style="width:52%"></div></div></div>
+              <div class="readiness-score" style="color:#825200">52%</div>
+            </div>
+            <div class="readiness-row">
+              <div class="readiness-label">People Management</div>
+              <div class="readiness-bar"><div class="progress-bar"><div class="progress-fill progress-fill-yellow" style="width:38%"></div></div></div>
+              <div class="readiness-score" style="color:#825200">38%</div>
+            </div>
+            <div class="readiness-row">
+              <div class="readiness-label">Business Impact</div>
+              <div class="readiness-bar"><div class="progress-bar"><div class="progress-fill progress-fill-red" style="width:25%"></div></div></div>
+              <div class="readiness-score" style="color:var(--ibm-red)">25%</div>
+            </div>
+            <div class="readiness-row">
+              <div class="readiness-label">Executive Presence</div>
+              <div class="readiness-bar"><div class="progress-bar"><div class="progress-fill progress-fill-yellow" style="width:50%"></div></div></div>
+              <div class="readiness-score" style="color:#825200">50%</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-header">Promotion Evidence Pack <span class="ai-chip">✦ watsonx assembled</span></div>
+          <div class="highlight-box">
+            <p>Tanya has demonstrated exceptional UX craft and is growing in leadership scope. Three areas require deliberate focus before a Director case can be made: (1) direct people management evidence, (2) business-facing contributions with measurable impact, and (3) cross-org influence beyond the immediate design team.</p>
+          </div>
+          <button class="topbar-btn btn-primary" onclick="navigate('reports', document.querySelector('[onclick*=reports]'))">Generate Full Promotion Packet →</button>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════
+           SCREEN 7 — REPORTS & PORTFOLIO
+      ════════════════════════════════ -->
+      <div class="screen" id="screen-reports">
+        <div class="page-header">
+          <h1>Reports &amp; Portfolio</h1>
+          <p>AI-generated assets · Private by default · One click to create, one click to share</p>
+        </div>
+        <div class="banner banner-success">
+          <span>✓</span><span>Q2 Performance Summary was generated successfully on Jul 10, 2025. 3 people have view access.</span>
+        </div>
+
+        <div class="three-col mb-20">
+          <div class="card" style="cursor:pointer;border-top:3px solid var(--ibm-blue)" onclick="alert('Generating Q3 2025 Performance Summary...\n\nwatsonx AI is analyzing 47 work log entries, 6 goals, and 18 skills.\n\nSummary ready — saved to your portfolio.')">
+            <div style="font-size:24px;margin-bottom:8px">📊</div>
+            <div class="font-semibold mb-4">Performance Summary</div>
+            <div class="text-sm text-muted mb-12">Goal alignment, impact metrics, skills growth — ready to paste into SuccessFactors.</div>
+            <button class="topbar-btn btn-primary" style="font-size:12px;width:100%;justify-content:center">Generate Q3 Summary</button>
+          </div>
+          <div class="card" style="cursor:pointer;border-top:3px solid var(--ibm-purple)" onclick="alert('Generating Promotion Evidence Pack...\n\nCompiling: top 10 contributions, skill evidence, impact metrics, stakeholder quotes.\n\nPromotion packet saved to portfolio.')">
+            <div style="font-size:24px;margin-bottom:8px">🚀</div>
+            <div class="font-semibold mb-4">Promotion Packet</div>
+            <div class="text-sm text-muted mb-12">Structured case for promotion: evidence, metrics, competency coverage, gap analysis.</div>
+            <button class="topbar-btn btn-ghost" style="font-size:12px;width:100%;justify-content:center;border-color:var(--ibm-purple);color:var(--ibm-purple)">Generate Pack</button>
+          </div>
+          <div class="card" style="cursor:pointer;border-top:3px solid var(--ibm-green)" onclick="alert('Generating Weekly Summary...\n\nSummarizing July 7–11, 2025 entries.\n\nWeekly digest ready — 3 entries, 6 skills, 2 goal contributions.')">
+            <div style="font-size:24px;margin-bottom:8px">📅</div>
+            <div class="font-semibold mb-4">Weekly Summary</div>
+            <div class="text-sm text-muted mb-12">Quick digest of the week's work, skills used, and goal contributions.</div>
+            <button class="topbar-btn btn-ghost" style="font-size:12px;width:100%;justify-content:center">Generate This Week</button>
+          </div>
+        </div>
+
+        <div class="section-header mb-12">Your Portfolio — Saved Assets</div>
+        <div class="card mb-8 flex items-center gap-16" style="padding:14px 20px">
+          <div style="font-size:20px">📊</div>
+          <div style="flex:1">
+            <div class="font-medium">Q2 2025 Performance Summary</div>
+            <div class="text-xs text-muted">Generated Jul 10, 2025 · 847 words · 6 goals · 14 skills evidenced</div>
+          </div>
+          <span class="tag tag-green">Shared (3)</span>
+          <button class="topbar-btn btn-ghost" style="font-size:12px">View</button>
+          <button class="topbar-btn btn-primary" style="font-size:12px" onclick="openModal('shareModal')">Share</button>
+        </div>
+        <div class="card mb-8 flex items-center gap-16" style="padding:14px 20px">
+          <div style="font-size:20px">🗺️</div>
+          <div style="flex:1">
+            <div class="font-medium">Director Career Roadmap — 3 Years</div>
+            <div class="text-xs text-muted">Generated Jun 28, 2025 · AI roadmap · 5 competencies · 12 milestones</div>
+          </div>
+          <span class="tag tag-gray">Private</span>
+          <button class="topbar-btn btn-ghost" style="font-size:12px">View</button>
+          <button class="topbar-btn btn-primary" style="font-size:12px" onclick="openModal('shareModal')">Share</button>
+        </div>
+        <div class="card mb-8 flex items-center gap-16" style="padding:14px 20px">
+          <div style="font-size:20px">📋</div>
+          <div style="flex:1">
+            <div class="font-medium">Q1 2025 Performance Summary</div>
+            <div class="text-xs text-muted">Generated Apr 1, 2025 · Archived · 5 goals · 11 skills</div>
+          </div>
+          <span class="tag tag-gray">Archived</span>
+          <button class="topbar-btn btn-ghost" style="font-size:12px">View</button>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════
+           SCREEN 8 — AI CAREER COACH
+      ════════════════════════════════ -->
+      <div class="screen" id="screen-coach">
+        <div class="page-header">
+          <h1>AI Career Coach <span class="ai-chip">✦ watsonx</span></h1>
+          <p>Ask anything about your career. Answers are grounded in your actual work log history.</p>
+        </div>
+        <div class="two-col">
+          <div class="card" style="height:calc(100vh - 240px);display:flex;flex-direction:column">
+            <div style="flex:1;overflow-y:auto;padding-bottom:8px" class="chat-wrap">
+              <div>
+                <div class="chat-ai-label">✦ Clarity AI · watsonx</div>
+                <div class="chat-bubble chat-bubble-ai">Hi Tanya 👋 I'm your AI career coach. I've analyzed your 47 work log entries, 6 goals, and your career dream (Director of Product Design in 3 years). What would you like to explore?</div>
+              </div>
+              <div>
+                <div class="chat-bubble chat-bubble-user">How close am I to becoming a Director?</div>
+              </div>
+              <div>
+                <div class="chat-ai-label">✦ Clarity AI · watsonx</div>
+                <div class="chat-bubble chat-bubble-ai">Based on your logged work, you're at about <strong>70% readiness</strong> for Director of Product Design.<br><br>
+                  <strong>You're strong on:</strong> UX craft (92%), stakeholder influence (75%) — your VP presentation on Jul 7 is direct evidence of this.<br><br>
+                  <strong>The key gaps:</strong><br>
+                  • <strong>Business impact</strong> (25%) — no logged entries tie your work to revenue, cost, or product metrics at a business level.<br>
+                  • <strong>People management</strong> (38%) — your mentoring is informal. Formalizing 1:1s with a growth plan would help significantly.<br><br>
+                  At your current growth rate, I'd estimate <strong>Q2–Q3 2027</strong> is realistic if you close the business impact gap intentionally in 2025.</div>
+              </div>
+              <div>
+                <div class="chat-bubble chat-bubble-user">What should I work on this quarter?</div>
+              </div>
+              <div>
+                <div class="chat-ai-label">✦ Clarity AI · watsonx</div>
+                <div class="chat-bubble chat-bubble-ai">This quarter (Q3 2025), I'd prioritize three things based on your gap analysis:<br><br>
+                  <strong>1. Log your AI strategy work</strong> — Goal 3 ("Drive AI product strategy") has only 1 log entry and is flagged as at-risk. Even 2–3 solid entries would change the picture.<br><br>
+                  <strong>2. Volunteer for design systems governance</strong> — you already started this. Completing it creates direct evidence for cross-org influence, which is partial right now.<br><br>
+                  <strong>3. Run one formal mentorship cycle</strong> — set goals, do monthly 1:1s, document it. This moves People Leadership from partial to evidenced.<br><br>
+                  These three actions address your three most critical promotion gaps simultaneously.</div>
+              </div>
+            </div>
+            <div style="border-top:1px solid var(--ibm-gray-20);padding-top:12px">
+              <div class="chat-input-row">
+                <input class="chat-input" placeholder="Ask about your career, skills, goals..." id="coachInput">
+                <button class="topbar-btn btn-primary" onclick="sendCoachMessage()">Send</button>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="card mb-12">
+              <div class="section-header">Suggested Questions</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div class="banner banner-info" style="cursor:pointer;margin:0" onclick="setCoachQ('What skill is holding me back the most?')">What skill is holding me back the most?</div>
+                <div class="banner banner-info" style="cursor:pointer;margin:0" onclick="setCoachQ('How does my Q3 compare to Q2?')">How does my Q3 compare to Q2?</div>
+                <div class="banner banner-info" style="cursor:pointer;margin:0" onclick="setCoachQ('What evidence do I have for a promotion case?')">What evidence do I have for a promotion case?</div>
+                <div class="banner banner-info" style="cursor:pointer;margin:0" onclick="setCoachQ('Which goal needs the most attention?')">Which goal needs the most attention?</div>
+                <div class="banner banner-info" style="cursor:pointer;margin:0" onclick="setCoachQ('What stretch projects should I seek out?')">What stretch projects should I seek out?</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="section-header">Context Active</div>
+              <div class="text-xs text-muted mb-8">Coach is grounded in your actual data — not generic advice.</div>
+              <div class="list-item" style="padding:6px 0">
+                <div class="list-dot" style="background:var(--ibm-green)"></div>
+                <div class="list-item-content"><div class="list-item-title" style="font-size:12px">47 work log entries (last 90 days)</div></div>
+              </div>
+              <div class="list-item" style="padding:6px 0">
+                <div class="list-dot" style="background:var(--ibm-blue)"></div>
+                <div class="list-item-content"><div class="list-item-title" style="font-size:12px">6 SuccessFactors goals (Q3 2025)</div></div>
+              </div>
+              <div class="list-item" style="padding:6px 0">
+                <div class="list-dot" style="background:var(--ibm-purple)"></div>
+                <div class="list-item-content"><div class="list-item-title" style="font-size:12px">Career dream: Director · 3 years</div></div>
+              </div>
+              <div class="list-item" style="padding:6px 0">
+                <div class="list-dot" style="background:var(--ibm-teal)"></div>
+                <div class="list-item-content"><div class="list-item-title" style="font-size:12px">18 evidenced skills · 3 new this quarter</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════
+           SCREEN 9 — PRIVACY & SHARING
+      ════════════════════════════════ -->
+      <div class="screen" id="screen-sharing">
+        <div class="page-header">
+          <h1>Privacy &amp; Sharing</h1>
+          <p>You control everything. Nothing leaves your space without your explicit action.</p>
+        </div>
+
+        <div class="highlight-box mb-20">
+          <p>🔒 <strong>Privacy is the default.</strong> Your manager has zero access to your dashboard, work logs, career dream, or any AI-derived insight unless you explicitly create a share grant below.</p>
+        </div>
+
+        <div class="two-col mb-20">
+          <div>
+            <div class="section-header mb-12">Active Share Grants</div>
+            <div class="card mb-8">
+              <div class="flex items-center justify-between mb-8">
+                <div class="font-semibold">Q2 Performance Summary</div>
+                <span class="badge badge-green">Active</span>
+              </div>
+              <div class="text-xs text-muted mb-4">Shared with: <strong>priya.sharma@ibm.com</strong> (Manager)</div>
+              <div class="text-xs text-muted mb-4">Access: View only · Expires: Aug 31, 2025</div>
+              <div class="flex gap-8">
+                <button class="topbar-btn btn-ghost" style="font-size:11px">Copy Link</button>
+                <button class="topbar-btn" style="font-size:11px;background:var(--ibm-red-light);color:var(--ibm-red);border:1px solid var(--ibm-red)" onclick="alert('Share revoked. Priya can no longer access this content.')">Revoke</button>
+              </div>
+            </div>
+            <div class="card mb-8">
+              <div class="flex items-center justify-between mb-8">
+                <div class="font-semibold">Goal Alignment Report</div>
+                <span class="badge badge-green">Active</span>
+              </div>
+              <div class="text-xs text-muted mb-4">Shared with: <strong>mentor@ibm.com</strong> (Mentor)</div>
+              <div class="text-xs text-muted mb-4">Access: View only · Expires: Sep 15, 2025</div>
+              <div class="flex gap-8">
+                <button class="topbar-btn btn-ghost" style="font-size:11px">Copy Link</button>
+                <button class="topbar-btn" style="font-size:11px;background:var(--ibm-red-light);color:var(--ibm-red);border:1px solid var(--ibm-red)" onclick="alert('Share revoked.')">Revoke</button>
+              </div>
+            </div>
+            <button class="topbar-btn btn-primary" onclick="openModal('shareModal')">+ Create New Share Grant</button>
+          </div>
+
+          <div>
+            <div class="section-header mb-12">Privacy Settings</div>
+            <div class="card">
+              <div class="list-item">
+                <div class="list-item-content">
+                  <div class="list-item-title">Career Dream &amp; Roadmap</div>
+                  <div class="list-item-sub">Visible only to you. Never included in any share unless you explicitly add it.</div>
+                </div>
+                <span class="badge badge-green" style="margin-left:auto">🔒 Private</span>
+              </div>
+              <div class="list-item">
+                <div class="list-item-content">
+                  <div class="list-item-title">Work Log Entries</div>
+                  <div class="list-item-sub">Visible only to you. Managers cannot see raw log entries.</div>
+                </div>
+                <span class="badge badge-green" style="margin-left:auto">🔒 Private</span>
+              </div>
+              <div class="list-item">
+                <div class="list-item-content">
+                  <div class="list-item-title">AI-derived Skills &amp; Insights</div>
+                  <div class="list-item-sub">Private to you. Included in summaries only when you generate and share a report.</div>
+                </div>
+                <span class="badge badge-green" style="margin-left:auto">🔒 Private</span>
+              </div>
+              <div class="list-item">
+                <div class="list-item-content">
+                  <div class="list-item-title">Goal Alignment View</div>
+                  <div class="list-item-sub">Shareable on-demand. Currently shared with 1 person (Priya Sharma).</div>
+                </div>
+                <span class="badge badge-blue" style="margin-left:auto">Shared (1)</span>
+              </div>
+              <div class="list-item" style="border:none">
+                <div class="list-item-content">
+                  <div class="list-item-title">Generated Performance Summaries</div>
+                  <div class="list-item-sub">Shareable assets. 1 currently active share.</div>
+                </div>
+                <span class="badge badge-blue" style="margin-left:auto">Shared (1)</span>
+              </div>
+            </div>
+
+            <div class="card mt-12">
+              <div class="section-header">Integration Access <span class="tag tag-gray">Mocked</span></div>
+              <div class="integration-tile mb-8">
+                <div class="integration-icon" style="background:#f4f4f4">🔷</div>
+                <div>
+                  <div class="integration-title">SuccessFactors</div>
+                  <div class="integration-desc">Goals imported · Read-only</div>
+                </div>
+                <span class="badge badge-green integration-status">Connected</span>
+              </div>
+              <div class="integration-tile mb-8">
+                <div class="integration-icon" style="background:#f4f4f4">🟠</div>
+                <div>
+                  <div class="integration-title">Jira</div>
+                  <div class="integration-desc">Ticket activity as draft logs · Mock data</div>
+                </div>
+                <span class="badge badge-yellow integration-status">Mocked</span>
+              </div>
+              <div class="integration-tile">
+                <div class="integration-icon" style="background:#f4f4f4">💬</div>
+                <div>
+                  <div class="integration-title">Slack</div>
+                  <div class="integration-desc">Log via slash command · Not connected</div>
+                </div>
+                <span class="badge badge-red integration-status">Disconnected</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+  const pageConfig = {
+    dashboard:  { title: 'Dashboard',           subtitle: 'Monday, July 14, 2025' },
+    worklog:    { title: 'Work Log',             subtitle: '47 entries · Last 90 days' },
+    goals:      { title: 'Goals & Alignment',    subtitle: 'Q3 2025 · SuccessFactors' },
+    career:     { title: 'Career Navigator',     subtitle: 'Director of Product Design · 3 years · Private 🔒' },
+    skills:     { title: 'Skill Intelligence',   subtitle: '18 skills evidenced · AI-derived' },
+    promotion:  { title: 'Promotion Readiness',  subtitle: 'Senior Designer → Director · 70% ready' },
+    reports:    { title: 'Reports & Portfolio',  subtitle: '3 assets · 1 active share' },
+    coach:      { title: 'AI Career Coach',      subtitle: 'Powered by watsonx AI · Grounded in your data' },
+    sharing:    { title: 'Privacy & Sharing',    subtitle: '2 active share grants · Manager access: none' },
+  };
+
+  function navigate(id, el) {
+    // hide all screens
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + id).classList.add('active');
+
+    // update nav highlight
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if (el) el.classList.add('active');
+
+    // update topbar
+    const cfg = pageConfig[id] || {};
+    document.getElementById('pageTitle').textContent = cfg.title || id;
+    document.getElementById('pageSubtitle').textContent = cfg.subtitle || '';
+
+    // scroll content to top
+    document.getElementById('content').scrollTop = 0;
+  }
+
+  function openModal(id) {
+    // reset goal dropdown to AI-suggest default when reopening log modal
+    if (id === 'logModal') {
+      const sel = document.getElementById('logGoalSelect');
+      if (sel) { sel.value = ''; onGoalSelect(sel); }
+    }
+    document.getElementById(id).classList.add('open');
+  }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+  // ── Goal dropdown interaction ──
+  const goalHints = {
+    '':   null,
+    'g1': { text: '✓ This entry maps well to UX delivery work — good fit.', cls: 'text-green' },
+    'g2': { text: '✓ Stakeholder collaboration in this entry supports cross-functional influence.', cls: 'text-green' },
+    'g3': { text: '⚠ This goal is at risk with 0 entries. Even a loose connection helps close the gap.', cls: 'text-red' },
+    'g4': { text: 'ℹ Mentorship entries should describe coaching, feedback given, or 1:1 topics.', cls: 'text-muted' },
+    'g5': { text: 'ℹ Learning entries: include what you studied, time spent, and what you applied.', cls: 'text-muted' },
+    'g6': null,
+  };
+  const aiGoalTexts = {
+    '':   'AI suggested goal: <span class="text-blue font-medium">Deliver Q3 watsonx UX milestones</span> <span class="tag tag-green" style="margin-left:4px">Best match</span>',
+    'g1': 'Manually selected: <span class="text-blue font-medium">Deliver Q3 watsonx UX milestones</span> <span class="tag tag-blue" style="margin-left:4px">Confirmed</span>',
+    'g2': 'Manually selected: <span class="text-blue font-medium">Build cross-functional influence</span> <span class="tag tag-blue" style="margin-left:4px">Confirmed</span>',
+    'g3': 'Manually selected: <span class="text-red font-medium">Drive AI product strategy</span> <span class="tag tag-red" style="margin-left:4px">At risk</span>',
+    'g4': 'Manually selected: <span class="text-blue font-medium">Mentor 2 junior designers</span> <span class="tag tag-blue" style="margin-left:4px">Confirmed</span>',
+    'g5': 'Manually selected: <span class="text-blue font-medium">Complete IBM Design Thinking cert</span> <span class="tag tag-blue" style="margin-left:4px">Confirmed</span>',
+    'g6': 'AI suggested goal: <span class="text-blue font-medium">Deliver Q3 watsonx UX milestones</span> <span class="tag tag-green" style="margin-left:4px">Best match</span>',
+  };
+
+  function onGoalSelect(sel) {
+    const val = sel.value;
+    const hintEl = document.getElementById('logGoalHint');
+    const aiLine = document.getElementById('aiGoalLine');
+    if (val === 'g6') {
+      sel.value = '';
+      alert('New goal creation: In the full product, this opens a "Create Goal" flow where you name the goal, link it to an org goal, and set a target date.');
+      return;
+    }
+    const hint = goalHints[val];
+    if (hint) {
+      hintEl.className = 'text-xs mt-4 ' + hint.cls;
+      hintEl.textContent = hint.text;
+      hintEl.style.display = 'block';
+    } else {
+      hintEl.style.display = 'none';
+    }
+    if (aiLine) aiLine.innerHTML = aiGoalTexts[val] || aiGoalTexts[''];
+  }
+
+  function saveLog() {
+    const sel = document.getElementById('logGoalSelect');
+    const goalName = sel && sel.value && sel.selectedIndex > 0
+      ? sel.options[sel.selectedIndex].text.replace(/^[⚠\s]+/, '')
+      : 'Deliver Q3 watsonx UX milestones (AI suggested)';
+    closeModal('logModal');
+    const banner = document.createElement('div');
+    banner.className = 'banner banner-success';
+    banner.innerHTML = '<span>✓</span><span><strong>Work log saved.</strong> watsonx derived 3 skills, 1 impact statement, and 3 metrics. Aligned to: <em>' + goalName + '</em></span>';
+    const content = document.getElementById('content');
+    content.insertBefore(banner, content.firstChild);
+    setTimeout(() => { if (banner.parentNode) banner.parentNode.removeChild(banner); }, 5000);
+  }
+
+  function toggleShare(card) {
+    const check = card.querySelector('.share-card-check');
+    if (card.classList.contains('selected')) {
+      card.classList.remove('selected');
+      check.textContent = '';
+    } else {
+      card.classList.add('selected');
+      check.textContent = '✓';
+    }
+  }
+
+  function sendCoachMessage() {
+    const input = document.getElementById('coachInput');
+    const q = input.value.trim();
+    if (!q) return;
+    input.value = '';
+    const wrap = document.querySelector('#screen-coach .chat-wrap');
+    const userBubble = document.createElement('div');
+    userBubble.innerHTML = '<div class="chat-bubble chat-bubble-user">' + q + '</div>';
+    wrap.appendChild(userBubble);
+    const aiResponse = document.createElement('div');
+    aiResponse.innerHTML = '<div class="chat-ai-label">✦ Clarity AI · watsonx</div><div class="chat-bubble chat-bubble-ai">I\'m analyzing your work log history to answer that... This is a prototype — in the live version, watsonx would provide a grounded response based on your 47 entries, 6 goals, and career dream data.</div>';
+    wrap.appendChild(aiResponse);
+    wrap.parentElement.scrollTop = wrap.parentElement.scrollHeight;
+  }
+
+  function setCoachQ(q) {
+    document.getElementById('coachInput').value = q;
+    document.getElementById('coachInput').focus();
+  }
+
+  // ── FAB ──
+  function toggleFab() {
+    const btn = document.getElementById('fab-main');
+    const menu = document.getElementById('fab-menu');
+    btn.classList.toggle('open');
+    menu.classList.toggle('open');
+  }
+  function fabLog(method) {
+    toggleFab();
+    if (method === 'text') {
+      openModal('logModal');
+    } else if (method === 'voice') {
+      alert('🎙 Voice log: In the full product, this activates your microphone. Speak your update — watsonx transcribes and enriches it automatically.');
+    } else if (method === 'jira') {
+      alert('🟠 Jira import: In the full product, this pulls your recent Jira ticket activity and presents them as one-click draft log entries.');
+    } else if (method === 'slack') {
+      alert('💬 Slack import: In the full product, forward any Slack message or thread here to instantly create a log entry from it.');
+    }
+  }
+  // close FAB when clicking outside
+  document.addEventListener('click', e => {
+    const fab = document.getElementById('fab-wrap');
+    if (fab && !fab.contains(e.target)) {
+      document.getElementById('fab-main').classList.remove('open');
+      document.getElementById('fab-menu').classList.remove('open');
+    }
+  });
+
+  // close modals on overlay click
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+  });
+</script>
+
+<!-- ══ FLOATING ACTION BUTTON ══ -->
+<div id="fab-wrap">
+  <div id="fab-menu">
+    <div class="fab-option" onclick="fabLog('slack')">
+      <span class="fab-option-label">Log from Slack</span>
+      <button class="fab-option-btn" style="background:#4a154b;color:white" title="Log from Slack">💬</button>
+    </div>
+    <div class="fab-option" onclick="fabLog('jira')">
+      <span class="fab-option-label">Import from Jira</span>
+      <button class="fab-option-btn" style="background:#0052cc;color:white" title="Import from Jira">🟦</button>
+    </div>
+    <div class="fab-option" onclick="fabLog('voice')">
+      <span class="fab-option-label">Voice note</span>
+      <button class="fab-option-btn" style="background:#198038;color:white" title="Voice log">🎙</button>
+    </div>
+    <div class="fab-option" onclick="fabLog('text')">
+      <span class="fab-option-label">Quick text log</span>
+      <button class="fab-option-btn" style="background:var(--ibm-blue);color:white" title="Text log">✏️</button>
+    </div>
+  </div>
+  <button id="fab-main" onclick="toggleFab()" title="Log work">+</button>
+</div>
+
+</body>
+</html>
