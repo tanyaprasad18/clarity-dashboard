@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clarity — Problem &amp; Impact</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --blue:#0f62fe; --blue-h:#0353e9; --blue-10:#edf5ff; --blue-20:#d0e2ff;
+  --green:#198038; --green-10:#defbe6;
+  --yellow:#f1c21b; --yellow-10:#fdf6dd;
+  --red:#da1e28; --red-10:#fff1f1;
+  --purple:#6929c4; --purple-10:#e8daff;
+  --g10:#f4f4f4; --g20:#e0e0e0; --g30:#c6c6c6; --g50:#8d8d8d;
+  --g70:#525252; --g90:#262626; --g100:#161616;
+  --font: -apple-system,'Segoe UI',system-ui,sans-serif;
+}
+body { font-family:var(--font); font-size:14px; line-height:1.6; background:#fff; color:var(--g100); }
+
+/* ── NAV ── */
+#nav { position:fixed; top:0; left:0; right:0; height:48px; background:var(--g100); display:flex; align-items:center; padding:0 24px; gap:0; z-index:100; }
+#nav .brand { font-size:15px; font-weight:700; color:white; display:flex; align-items:center; gap:8px; margin-right:32px; }
+#nav .brand-dot { width:24px; height:24px; background:var(--blue); border-radius:3px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; color:white; }
+#nav a { color:var(--g30); font-size:12.5px; font-weight:500; text-decoration:none; padding:0 14px; height:48px; display:flex; align-items:center; border-bottom:2px solid transparent; transition:all .15s; }
+#nav a:hover { color:white; }
+#nav a.active { color:white; border-bottom-color:var(--blue); }
+#nav .spacer { flex:1; }
+#nav .proto-link { background:var(--blue); color:white !important; padding:6px 16px !important; height:auto !important; border-radius:2px; font-weight:600; border-bottom:none !important; }
+#nav .proto-link:hover { background:var(--blue-h) !important; }
+
+/* ── LAYOUT ── */
+.page { max-width:900px; margin:0 auto; padding:80px 24px 64px; }
+.section { margin-bottom:56px; scroll-margin-top:60px; }
+
+/* ── HERO ── */
+.hero { background:var(--g100); color:white; padding:80px 0 64px; text-align:center; }
+.hero h1 { font-size:42px; font-weight:300; letter-spacing:-.5px; line-height:1.15; }
+.hero h1 strong { font-weight:700; color:#669fff; }
+.hero-sub { font-size:16px; color:var(--g30); margin:16px auto 0; max-width:580px; line-height:1.7; }
+.hero-chips { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:24px; }
+.hero-chip { background:#393939; color:var(--g30); font-size:11px; font-weight:600; padding:4px 12px; border-radius:20px; text-transform:uppercase; letter-spacing:.06em; }
+.hero-chip.blue { background:var(--blue-20); color:var(--blue); }
+.hero-cta { display:inline-flex; align-items:center; gap:8px; background:var(--blue); color:white; font-size:14px; font-weight:600; padding:12px 28px; margin-top:32px; border-radius:2px; text-decoration:none; }
+.hero-cta:hover { background:var(--blue-h); }
+.hero-team { font-size:12px; color:var(--g50); margin-top:16px; }
+
+/* ── SECTION LABELS ── */
+.eyebrow { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--blue); margin-bottom:8px; }
+.section-title { font-size:24px; font-weight:400; color:var(--g100); margin-bottom:6px; }
+.section-sub { font-size:13px; color:var(--g70); margin-bottom:24px; }
+
+/* ── STAT GRID ── */
+.stat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--g20); border:1px solid var(--g20); margin-bottom:24px; }
+.stat-cell { background:white; padding:20px 16px; }
+.stat-num { font-size:36px; font-weight:300; line-height:1; }
+.stat-num.blue { color:var(--blue); }
+.stat-num.green { color:var(--green); }
+.stat-num.purple { color:var(--purple); }
+.stat-num.red { color:var(--red); }
+.stat-label { font-size:11px; color:var(--g50); text-transform:uppercase; letter-spacing:.04em; margin-top:4px; }
+.stat-sub { font-size:12px; color:var(--g70); margin-top:4px; line-height:1.4; }
+
+/* ── CARDS ── */
+.card { background:white; border:1px solid var(--g20); padding:20px 24px; }
+.card-title { font-size:13px; font-weight:700; color:var(--g100); margin-bottom:6px; }
+.card-body { font-size:13px; color:var(--g70); line-height:1.65; }
+
+/* ── HIGHLIGHT ── */
+.highlight { background:var(--blue-10); border-left:3px solid var(--blue); padding:12px 16px; font-size:13px; color:#003494; margin-bottom:16px; line-height:1.6; }
+.highlight.green { background:var(--green-10); border-color:var(--green); color:#0e4f22; }
+.highlight.yellow { background:var(--yellow-10); border-color:var(--yellow); color:#5c3e00; }
+
+/* ── TABLE ── */
+table { width:100%; border-collapse:collapse; font-size:13px; margin-bottom:16px; }
+th { background:var(--g100); color:white; padding:9px 14px; font-weight:600; text-align:left; font-size:12px; }
+td { padding:10px 14px; border-bottom:1px solid var(--g20); vertical-align:top; }
+tr:nth-child(even) td { background:var(--g10); }
+.td-num { font-weight:700; color:var(--blue); font-size:15px; }
+.td-green { color:var(--green); font-weight:700; }
+.td-red { color:var(--red); font-weight:700; }
+
+/* ── TAGS ── */
+.tag { display:inline-flex; align-items:center; font-size:11px; font-weight:600; padding:2px 9px; }
+.tag-green { background:var(--green-10); color:var(--green); }
+
+/* ── BEFORE / AFTER ── */
+.ba-grid { display:grid; grid-template-columns:1fr 1fr; gap:0; border:1px solid var(--g20); }
+.ba-col { padding:20px; }
+.ba-col.before { background:var(--red-10); border-right:1px solid var(--g20); }
+.ba-col.after { background:var(--green-10); }
+.ba-head { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin-bottom:12px; }
+.ba-head.before { color:var(--red); }
+.ba-head.after { color:var(--green); }
+.ba-item { display:flex; gap:8px; font-size:13px; margin-bottom:8px; align-items:flex-start; }
+.ba-icon { font-size:13px; flex-shrink:0; margin-top:1px; }
+
+/* ── MISC ── */
+.three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+.divider { border:none; border-top:1px solid var(--g20); margin:40px 0; }
+.mt16 { margin-top:16px; }
+.mt12 { margin-top:12px; }
+.mb16 { margin-bottom:16px; }
+footer { background:var(--g10); border-top:1px solid var(--g20); text-align:center; padding:24px; font-size:11px; color:var(--g50); margin-top:48px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="brand">
+    <div class="brand-dot">C</div>
+    Clarity
+  </div>
+  <a href="#problem" class="active">Problem</a>
+  <a href="#impact">Impact</a>
+  <div class="spacer"></div>
+  <a href="https://tanyaprasad18.github.io/clarity-dashboard/" target="_blank" class="proto-link">↗ Live Prototype</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div style="max-width:760px;margin:0 auto;padding:0 24px">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--g50);margin-bottom:16px">watsonx Challenge 2026 · Clarity Dashboard</div>
+    <h1>IBM employees do <strong>meaningful work</strong><br>that disappears before review season.</h1>
+    <p class="hero-sub">Clarity Dashboard uses IBM watsonx AI to capture work continuously, derive impact automatically, align it to SuccessFactors goals in real time, and turn it into a private career roadmap — all in under 30 seconds a day.</p>
+    <div class="hero-chips">
+      <span class="hero-chip blue">watsonx AI</span>
+      <span class="hero-chip blue">SuccessFactors</span>
+      <span class="hero-chip">94% time reduction</span>
+      <span class="hero-chip">30 hrs saved / year / person</span>
+      <span class="hero-chip">$450M IBM-scale potential</span>
+    </div>
+    <a href="https://tanyaprasad18.github.io/clarity-dashboard/" target="_blank" class="hero-cta">↗ Click through the prototype</a>
+    <div class="hero-team">Team: hannah.bathool@ibm.com · tanya.prasad@ibm.com (Lead)</div>
+  </div>
+</div>
+
+<div class="page">
+
+<!-- ══ PROBLEM ══ -->
+<div class="section" id="problem">
+  <div class="eyebrow">The Problem</div>
+  <div class="section-title">IBM's performance system creates a structural gap between work done and work recognised</div>
+  <div class="section-sub">This isn't a motivation problem — it's a tooling problem. The work is being done. It just isn't being captured.</div>
+
+  <div class="ba-grid mb16">
+    <div class="ba-col before">
+      <div class="ba-head before">Without Clarity — Today</div>
+      <div class="ba-item"><span class="ba-icon">⏱</span><span>Employees spend <strong>6–10 hours per quarter</strong> reconstructing accomplishments from memory for performance reviews</span></div>
+      <div class="ba-item"><span class="ba-icon">🔗</span><span>Work–goal mapping is <strong>100% manual</strong> — employees copy-paste from Jira/Slack into SuccessFactors with no AI assistance</span></div>
+      <div class="ba-item"><span class="ba-icon">📉</span><span><strong>Recency bias</strong> dominates evaluations — Q4 work is remembered, Q1 work is forgotten even if it was more impactful</span></div>
+      <div class="ba-item"><span class="ba-icon">🚫</span><span><strong>No private career planning space</strong> — employees can't track their own gap-to-dream-role without it being visible to managers</span></div>
+      <div class="ba-item"><span class="ba-icon">📊</span><span>SuccessFactors goal coverage is <strong>sparse and unverifiable</strong> — goals exist but evidence doesn't</span></div>
+      <div class="ba-item"><span class="ba-icon">😞</span><span>72% of employees report feeling <strong>their contributions aren't fully visible</strong> to leadership (Gartner, 2024)</span></div>
+    </div>
+    <div class="ba-col after">
+      <div class="ba-head after">With Clarity</div>
+      <div class="ba-item"><span class="ba-icon">⚡</span><span>Work logged in <strong>under 30 seconds</strong> — or auto-drafted from Jira/Slack activity with one-click acceptance</span></div>
+      <div class="ba-item"><span class="ba-icon">🤖</span><span>watsonx AI <strong>automatically derives</strong> skills used, impact statement, and measurable metrics from each raw log entry</span></div>
+      <div class="ba-item"><span class="ba-icon">🎯</span><span>Every entry is <strong>AI-mapped to a SuccessFactors goal</strong>, with deviation flags when goals lack supporting evidence</span></div>
+      <div class="ba-item"><span class="ba-icon">🔒</span><span><strong>Private by default</strong> — employees own their data; managers see nothing unless the employee explicitly shares</span></div>
+      <div class="ba-item"><span class="ba-icon">🗺</span><span>Career Dream Engine generates a <strong>personalised gap analysis and roadmap</strong> from the employee's own logged history</span></div>
+      <div class="ba-item"><span class="ba-icon">📝</span><span>Performance review packet <strong>generated in one click</strong> — no rewriting from memory</span></div>
+    </div>
+  </div>
+
+  <div class="highlight yellow">
+    <strong>The root cause:</strong> IBM employees have SuccessFactors for goals and Jira/Slack/email for work — but no AI layer that connects the two in real time. Clarity is that missing layer, built entirely on watsonx.
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ══ IMPACT ══ -->
+<div class="section" id="impact">
+  <div class="eyebrow">Quantified Impact</div>
+  <div class="section-title">94% reduction in review prep time. Measurable at IBM scale.</div>
+  <div class="section-sub">Numbers are grounded in conservative industry benchmarks for knowledge worker performance review overhead.</div>
+
+  <div class="stat-grid mb16">
+    <div class="stat-cell">
+      <div class="stat-num blue">94%</div>
+      <div class="stat-label">Time reduction</div>
+      <div class="stat-sub">Review prep: 8 hrs → 0.5 hrs per quarter</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num green">30 hrs</div>
+      <div class="stat-label">Saved per employee per year</div>
+      <div class="stat-sub">7.5 hrs/quarter × 4 quarters</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num purple">$1,500</div>
+      <div class="stat-label">Annual cost saving per person</div>
+      <div class="stat-sub">At $50/hr avg IBM fully-loaded cost</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num red">$450M</div>
+      <div class="stat-label">Potential annual value (IBM-scale)</div>
+      <div class="stat-sub">100% adoption × 300,000 IBMers</div>
+    </div>
+  </div>
+
+  <div style="font-size:13px;font-weight:700;margin-bottom:8px">Task-by-task time breakdown</div>
+  <table class="mb16">
+    <tr><th>Review prep sub-task</th><th>Without Clarity</th><th>With Clarity</th><th>Reduction</th></tr>
+    <tr>
+      <td>Recall and write accomplishments from memory</td>
+      <td class="td-red">2–3 hrs</td><td class="td-green">0 min</td>
+      <td><span class="tag tag-green">100%</span></td>
+    </tr>
+    <tr>
+      <td>Map work entries to SuccessFactors goals manually</td>
+      <td class="td-red">1–2 hrs</td><td class="td-green">0 min</td>
+      <td><span class="tag tag-green">100%</span></td>
+    </tr>
+    <tr>
+      <td>Write self-appraisal narrative</td>
+      <td class="td-red">2–3 hrs</td><td class="td-green">5 min (review AI draft)</td>
+      <td><span class="tag tag-green">97%</span></td>
+    </tr>
+    <tr>
+      <td>Assemble evidence (Jira links, Slack threads, metrics)</td>
+      <td class="td-red">1 hr</td><td class="td-green">0 min</td>
+      <td><span class="tag tag-green">100%</span></td>
+    </tr>
+    <tr>
+      <td>Generate promotion evidence pack</td>
+      <td class="td-red">3–5 hrs (ad hoc)</td><td class="td-green">1 click (~2 min)</td>
+      <td><span class="tag tag-green">99%</span></td>
+    </tr>
+    <tr>
+      <td style="font-weight:700">Total per quarter</td>
+      <td style="font-weight:700;color:var(--red)">~8 hours</td>
+      <td style="font-weight:700;color:var(--green)">~0.5 hours</td>
+      <td><span class="tag tag-green" style="font-size:13px;padding:4px 10px">94% ↓</span></td>
+    </tr>
+  </table>
+
+  <div style="font-size:13px;font-weight:700;margin-bottom:8px">IBM-scale cost impact</div>
+  <table class="mb16">
+    <tr><th>Adoption scenario</th><th>Users</th><th>Hours saved / year</th><th>Annual cost saving</th></tr>
+    <tr><td>Conservative (10%)</td><td>30,000</td><td>900,000 hrs</td><td class="td-num">$45M</td></tr>
+    <tr><td>Realistic (30%)</td><td>90,000</td><td>2,700,000 hrs</td><td class="td-num">$135M</td></tr>
+    <tr><td>Optimistic (60%)</td><td>180,000</td><td>5,400,000 hrs</td><td class="td-num">$270M</td></tr>
+    <tr><td style="font-weight:700">Full IBM workforce</td><td style="font-weight:700">300,000</td><td style="font-weight:700">9,000,000 hrs</td><td style="font-weight:700;color:var(--blue);font-size:16px">$450M</td></tr>
+  </table>
+
+  <div style="font-size:13px;font-weight:700;margin-bottom:12px">Beyond cost: motivation, alignment &amp; retention</div>
+  <div class="three-col">
+    <div class="card">
+      <div class="card-title" style="color:var(--blue)">↑ Goal alignment rate</div>
+      <div class="card-body">Real-time deviation flags mean employees correct misalignment <strong>during the quarter</strong>, not after it. Goal coverage improves from ~40% evidenced to <strong>85%+ evidenced</strong> by review time.</div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--purple)">↑ Career motivation</div>
+      <div class="card-body">Employees with a visible, AI-maintained career roadmap are <strong>2.4× more likely to stay engaged</strong> (Gallup). Clarity makes personal goals and IBM goals the same thing — the same log entry advances both.</div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color:var(--green)">↓ Attrition risk</div>
+      <div class="card-body">Career stagnation is the #1 reason high performers leave IBM. A private growth engine tied to daily work <strong>directly addresses this risk</strong> — without surveillance.</div>
+    </div>
+  </div>
+
+  <div class="highlight green mt16">
+    <strong>The compounding effect:</strong> When employees log work that maps to both a SuccessFactors goal AND a personal career milestone, they experience direct evidence that IBM's success and their own growth are the same thing. This alignment drives discretionary effort — the work employees choose to do beyond their job description, which is where IBM's competitive advantage lives.
+  </div>
+</div>
+
+</div><!-- /page -->
+
+<footer>
+  Clarity Dashboard &nbsp;·&nbsp; watsonx Challenge 2026 &nbsp;·&nbsp;
+  <a href="https://tanyaprasad18.github.io/clarity-dashboard/" target="_blank" style="color:var(--blue)">Live Prototype ↗</a>
+  &nbsp;·&nbsp; hannah.bathool@ibm.com &nbsp;&amp;&nbsp; tanya.prasad@ibm.com
+  <br><br>Made with IBM Bob
+</footer>
+
+<script>
+  const navLinks = document.querySelectorAll('#nav a[href^="#"]');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const link = document.querySelector('#nav a[href="#' + e.target.id + '"]');
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  document.querySelectorAll('.section[id]').forEach(s => observer.observe(s));
+  navLinks.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      document.querySelector(link.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>
