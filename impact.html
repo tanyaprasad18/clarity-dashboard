@@ -14,12 +14,13 @@
   --purple:#6929c4; --purple-10:#e8daff;
   --g10:#f4f4f4; --g20:#e0e0e0; --g30:#c6c6c6; --g50:#8d8d8d;
   --g70:#525252; --g90:#262626; --g100:#161616;
-  --font: -apple-system,'Segoe UI',system-ui,sans-serif;
+  --font: 'IBM Plex Sans',-apple-system,'Segoe UI',system-ui,sans-serif;
 }
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
 body { font-family:var(--font); font-size:14px; line-height:1.6; background:#fff; color:var(--g100); }
 
 /* ── NAV ── */
-#nav { position:fixed; top:0; left:0; right:0; height:48px; background:var(--g100); display:flex; align-items:center; padding:0 24px; gap:0; z-index:100; }
+#nav { position:fixed; top:0; left:0; right:0; height:48px; background:var(--g100); display:flex; align-items:center; padding:0 24px; z-index:100; }
 #nav .brand { font-size:15px; font-weight:700; color:white; display:flex; align-items:center; gap:8px; margin-right:32px; }
 #nav .brand-dot { width:24px; height:24px; background:var(--blue); border-radius:3px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; color:white; }
 #nav a { color:var(--g30); font-size:12.5px; font-weight:500; text-decoration:none; padding:0 14px; height:48px; display:flex; align-items:center; border-bottom:2px solid transparent; transition:all .15s; }
@@ -31,24 +32,31 @@ body { font-family:var(--font); font-size:14px; line-height:1.6; background:#fff
 
 /* ── LAYOUT ── */
 .page { max-width:900px; margin:0 auto; padding:80px 24px 64px; }
-.section { margin-bottom:56px; scroll-margin-top:60px; }
+.section { margin-bottom:56px; scroll-margin-top:64px; }
 
 /* ── HERO ── */
-.hero { background:var(--g100); color:white; padding:80px 0 64px; text-align:center; }
-.hero h1 { font-size:42px; font-weight:300; letter-spacing:-.5px; line-height:1.15; }
+.hero { background:var(--g100); color:white; padding:88px 0 72px; text-align:center; }
+.hero-eyebrow { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.14em; color:var(--g50); margin-bottom:20px; }
+.hero h1 { font-size:40px; font-weight:300; letter-spacing:-.5px; line-height:1.18; }
 .hero h1 strong { font-weight:700; color:#669fff; }
-.hero-sub { font-size:16px; color:var(--g30); margin:16px auto 0; max-width:580px; line-height:1.7; }
-.hero-chips { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:24px; }
+.hero-sub { font-size:15px; color:#a8b8cc; margin:20px auto 0; max-width:620px; line-height:1.75; font-weight:300; }
+.hero-divider { width:48px; height:2px; background:var(--blue); margin:28px auto; }
+.hero-two-col { display:grid; grid-template-columns:1fr 1fr; gap:0; max-width:720px; margin:0 auto 32px; border:1px solid #393939; }
+.hero-persona { padding:24px 28px; text-align:left; }
+.hero-persona:first-child { border-right:1px solid #393939; }
+.hero-persona-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--blue); margin-bottom:10px; }
+.hero-persona-text { font-size:13px; color:#a8b8cc; line-height:1.65; font-weight:300; }
+.hero-chips { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:28px; }
 .hero-chip { background:#393939; color:var(--g30); font-size:11px; font-weight:600; padding:4px 12px; border-radius:20px; text-transform:uppercase; letter-spacing:.06em; }
-.hero-chip.blue { background:var(--blue-20); color:var(--blue); }
-.hero-cta { display:inline-flex; align-items:center; gap:8px; background:var(--blue); color:white; font-size:14px; font-weight:600; padding:12px 28px; margin-top:32px; border-radius:2px; text-decoration:none; }
+.hero-chip.blue { background:rgba(15,98,254,.2); color:#669fff; }
+.hero-cta { display:inline-flex; align-items:center; gap:8px; background:var(--blue); color:white; font-size:14px; font-weight:600; padding:12px 28px; border-radius:2px; text-decoration:none; }
 .hero-cta:hover { background:var(--blue-h); }
-.hero-team { font-size:12px; color:var(--g50); margin-top:16px; }
+.hero-team { font-size:12px; color:var(--g50); margin-top:14px; }
 
 /* ── SECTION LABELS ── */
 .eyebrow { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--blue); margin-bottom:8px; }
 .section-title { font-size:24px; font-weight:400; color:var(--g100); margin-bottom:6px; }
-.section-sub { font-size:13px; color:var(--g70); margin-bottom:24px; }
+.section-sub { font-size:13px; color:var(--g70); margin-bottom:24px; line-height:1.65; }
 
 /* ── STAT GRID ── */
 .stat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--g20); border:1px solid var(--g20); margin-bottom:24px; }
@@ -67,7 +75,7 @@ body { font-family:var(--font); font-size:14px; line-height:1.6; background:#fff
 .card-body { font-size:13px; color:var(--g70); line-height:1.65; }
 
 /* ── HIGHLIGHT ── */
-.highlight { background:var(--blue-10); border-left:3px solid var(--blue); padding:12px 16px; font-size:13px; color:#003494; margin-bottom:16px; line-height:1.6; }
+.highlight { background:var(--blue-10); border-left:3px solid var(--blue); padding:14px 18px; font-size:13px; color:#003494; margin-bottom:16px; line-height:1.7; }
 .highlight.green { background:var(--green-10); border-color:var(--green); color:#0e4f22; }
 .highlight.yellow { background:var(--yellow-10); border-color:var(--yellow); color:#5c3e00; }
 
@@ -92,15 +100,17 @@ tr:nth-child(even) td { background:var(--g10); }
 .ba-head { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin-bottom:12px; }
 .ba-head.before { color:var(--red); }
 .ba-head.after { color:var(--green); }
-.ba-item { display:flex; gap:8px; font-size:13px; margin-bottom:8px; align-items:flex-start; }
+.ba-item { display:flex; gap:8px; font-size:13px; margin-bottom:10px; align-items:flex-start; line-height:1.55; }
 .ba-icon { font-size:13px; flex-shrink:0; margin-top:1px; }
 
 /* ── MISC ── */
 .three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
-.divider { border:none; border-top:1px solid var(--g20); margin:40px 0; }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.divider { border:none; border-top:1px solid var(--g20); margin:44px 0; }
 .mt16 { margin-top:16px; }
 .mt12 { margin-top:12px; }
 .mb16 { margin-bottom:16px; }
+.mb24 { margin-bottom:24px; }
 footer { background:var(--g10); border-top:1px solid var(--g20); text-align:center; padding:24px; font-size:11px; color:var(--g50); margin-top:48px; }
 </style>
 </head>
@@ -120,19 +130,29 @@ footer { background:var(--g10); border-top:1px solid var(--g20); text-align:cent
 
 <!-- HERO -->
 <div class="hero">
-  <div style="max-width:760px;margin:0 auto;padding:0 24px">
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--g50);margin-bottom:16px">watsonx Challenge 2026 · Clarity Dashboard</div>
-    <h1>IBM employees do <strong>meaningful work</strong><br>that disappears before review season.</h1>
-    <p class="hero-sub">Clarity Dashboard uses IBM watsonx AI to capture work continuously, derive impact automatically, align it to SuccessFactors goals in real time, and turn it into a private career roadmap — all in under 30 seconds a day.</p>
+  <div style="max-width:780px;margin:0 auto;padding:0 24px">
+    <div class="hero-eyebrow">watsonx Challenge 2026 &nbsp;·&nbsp; Clarity Dashboard</div>
+    <h1>Your career operating system.<br>Powered by <strong>IBM watsonx.</strong></h1>
+    <div class="hero-divider"></div>
+    <div class="hero-two-col">
+      <div class="hero-persona">
+        <div class="hero-persona-label">For Employees</div>
+        <div class="hero-persona-text">A personal career portfolio that effortlessly captures your daily work, tracks your progress against business goals, and turns your career aspirations into an achievable, AI-guided roadmap. Your scrapbook. Your story. Your future.</div>
+      </div>
+      <div class="hero-persona">
+        <div class="hero-persona-label">For Leaders &amp; IBM</div>
+        <div class="hero-persona-text">A continuous, evidence-based view of team impact — enabling fair promotions, better coaching, smarter resource planning, and more informed decisions grounded in real contributions, not memory or recency bias.</div>
+      </div>
+    </div>
     <div class="hero-chips">
-      <span class="hero-chip blue">watsonx AI</span>
+      <span class="hero-chip blue">IBM watsonx AI</span>
       <span class="hero-chip blue">SuccessFactors</span>
-      <span class="hero-chip">94% time reduction</span>
-      <span class="hero-chip">30 hrs saved / year / person</span>
+      <span class="hero-chip">20+ hrs saved / review cycle</span>
+      <span class="hero-chip">Evidence-based promotions</span>
       <span class="hero-chip">$450M IBM-scale potential</span>
     </div>
     <a href="https://tanyaprasad18.github.io/clarity-dashboard/" target="_blank" class="hero-cta">↗ Click through the prototype</a>
-    <div class="hero-team">Team: hannah.bathool@ibm.com · tanya.prasad@ibm.com (Lead)</div>
+    <div class="hero-team">Team: hannah.bathool@ibm.com &nbsp;·&nbsp; tanya.prasad@ibm.com (Lead)</div>
   </div>
 </div>
 
@@ -141,32 +161,32 @@ footer { background:var(--g10); border-top:1px solid var(--g20); text-align:cent
 <!-- ══ PROBLEM ══ -->
 <div class="section" id="problem">
   <div class="eyebrow">The Problem</div>
-  <div class="section-title">IBM's performance system creates a structural gap between work done and work recognised</div>
-  <div class="section-sub">This isn't a motivation problem — it's a tooling problem. The work is being done. It just isn't being captured.</div>
+  <div class="section-title">IBM's most valuable asset — its people's contributions — is largely invisible until it's too late</div>
+  <div class="section-sub">The average employee spends <strong>20+ hours per year</strong> preparing for performance reviews, and <strong>73% say they struggle to articulate their achievements</strong> — not because the work wasn't done, but because the evidence of that impact is scattered across Jira, Slack, email, and memory. Leaders make promotion, recognition, and resource decisions based on what they remember rather than what actually happened.</div>
 
   <div class="ba-grid mb16">
     <div class="ba-col before">
       <div class="ba-head before">Without Clarity — Today</div>
-      <div class="ba-item"><span class="ba-icon">⏱</span><span>Employees spend <strong>6–10 hours per quarter</strong> reconstructing accomplishments from memory for performance reviews</span></div>
-      <div class="ba-item"><span class="ba-icon">🔗</span><span>Work–goal mapping is <strong>100% manual</strong> — employees copy-paste from Jira/Slack into SuccessFactors with no AI assistance</span></div>
-      <div class="ba-item"><span class="ba-icon">📉</span><span><strong>Recency bias</strong> dominates evaluations — Q4 work is remembered, Q1 work is forgotten even if it was more impactful</span></div>
-      <div class="ba-item"><span class="ba-icon">🚫</span><span><strong>No private career planning space</strong> — employees can't track their own gap-to-dream-role without it being visible to managers</span></div>
-      <div class="ba-item"><span class="ba-icon">📊</span><span>SuccessFactors goal coverage is <strong>sparse and unverifiable</strong> — goals exist but evidence doesn't</span></div>
-      <div class="ba-item"><span class="ba-icon">😞</span><span>72% of employees report feeling <strong>their contributions aren't fully visible</strong> to leadership (Gartner, 2024)</span></div>
+      <div class="ba-item"><span class="ba-icon">⏱</span><span>Employees spend <strong>20+ hours per year</strong> reconstructing accomplishments from scattered tools and memory</span></div>
+      <div class="ba-item"><span class="ba-icon">📉</span><span><strong>Recency bias dominates</strong> — Q4 is remembered, Q1 is forgotten, even if Q1 was more impactful</span></div>
+      <div class="ba-item"><span class="ba-icon">🔗</span><span>Work–goal mapping is <strong>100% manual</strong> — employees copy-paste from tools into SuccessFactors with no AI assistance</span></div>
+      <div class="ba-item"><span class="ba-icon">🚫</span><span><strong>No private career planning space</strong> — employees can't track their own growth trajectory without it being visible to managers</span></div>
+      <div class="ba-item"><span class="ba-icon">📊</span><span>Leaders make promotion and resource decisions based on <strong>incomplete, anecdotal evidence</strong> rather than continuous data</span></div>
+      <div class="ba-item"><span class="ba-icon">😞</span><span><strong>73% of employees</strong> feel their contributions aren't fully visible to leadership — reducing engagement and increasing attrition risk</span></div>
     </div>
     <div class="ba-col after">
       <div class="ba-head after">With Clarity</div>
-      <div class="ba-item"><span class="ba-icon">⚡</span><span>Work logged in <strong>under 30 seconds</strong> — or auto-drafted from Jira/Slack activity with one-click acceptance</span></div>
-      <div class="ba-item"><span class="ba-icon">🤖</span><span>watsonx AI <strong>automatically derives</strong> skills used, impact statement, and measurable metrics from each raw log entry</span></div>
-      <div class="ba-item"><span class="ba-icon">🎯</span><span>Every entry is <strong>AI-mapped to a SuccessFactors goal</strong>, with deviation flags when goals lack supporting evidence</span></div>
-      <div class="ba-item"><span class="ba-icon">🔒</span><span><strong>Private by default</strong> — employees own their data; managers see nothing unless the employee explicitly shares</span></div>
-      <div class="ba-item"><span class="ba-icon">🗺</span><span>Career Dream Engine generates a <strong>personalised gap analysis and roadmap</strong> from the employee's own logged history</span></div>
-      <div class="ba-item"><span class="ba-icon">📝</span><span>Performance review packet <strong>generated in one click</strong> — no rewriting from memory</span></div>
+      <div class="ba-item"><span class="ba-icon">⚡</span><span>Work logged in <strong>under 30 seconds</strong> — or auto-drafted from Jira and Slack activity with one-click acceptance</span></div>
+      <div class="ba-item"><span class="ba-icon">🤖</span><span>IBM watsonx AI <strong>automatically derives</strong> skills demonstrated, impact created, and measurable metrics from every log entry</span></div>
+      <div class="ba-item"><span class="ba-icon">🎯</span><span>Every entry is <strong>AI-mapped to a SuccessFactors goal</strong> in real time — with flags when goals are at risk of going unevidenced</span></div>
+      <div class="ba-item"><span class="ba-icon">🗺</span><span>The <strong>Career Navigator</strong> builds a personalised, gap-based roadmap from the employee's own logged history — private, actionable, AI-powered</span></div>
+      <div class="ba-item"><span class="ba-icon">📋</span><span>Leaders get a <strong>continuous, evidence-based view</strong> of team contributions — enabling fair, defensible promotion and development decisions</span></div>
+      <div class="ba-item"><span class="ba-icon">📝</span><span>Performance review package <strong>generated in one click</strong> — instead of reconstructing a year, employees are continuously building their future</span></div>
     </div>
   </div>
 
   <div class="highlight yellow">
-    <strong>The root cause:</strong> IBM employees have SuccessFactors for goals and Jira/Slack/email for work — but no AI layer that connects the two in real time. Clarity is that missing layer, built entirely on watsonx.
+    <strong>The root cause:</strong> IBM employees have SuccessFactors for goals and Jira/Slack/email for work — but no intelligent layer that connects the two continuously. Clarity is that missing layer, built entirely on IBM watsonx, turning daily work into a living record of professional growth.
   </div>
 </div>
 
@@ -175,95 +195,95 @@ footer { background:var(--g10); border-top:1px solid var(--g20); text-align:cent
 <!-- ══ IMPACT ══ -->
 <div class="section" id="impact">
   <div class="eyebrow">Quantified Impact</div>
-  <div class="section-title">94% reduction in review prep time. Measurable at IBM scale.</div>
-  <div class="section-sub">Numbers are grounded in conservative industry benchmarks for knowledge worker performance review overhead.</div>
+  <div class="section-title">Measurable ROI — for employees, leaders, and IBM at scale</div>
+  <div class="section-sub">Numbers are grounded in conservative, independently sourced benchmarks for knowledge worker performance review overhead across enterprise organisations.</div>
 
-  <div class="stat-grid mb16">
+  <div class="stat-grid mb24">
     <div class="stat-cell">
-      <div class="stat-num blue">94%</div>
-      <div class="stat-label">Time reduction</div>
-      <div class="stat-sub">Review prep: 8 hrs → 0.5 hrs per quarter</div>
+      <div class="stat-num blue">73%</div>
+      <div class="stat-label">Employees who struggle to articulate impact</div>
+      <div class="stat-sub">Evidence scattered across tools — Clarity centralises it automatically</div>
     </div>
     <div class="stat-cell">
-      <div class="stat-num green">30 hrs</div>
-      <div class="stat-label">Saved per employee per year</div>
-      <div class="stat-sub">7.5 hrs/quarter × 4 quarters</div>
+      <div class="stat-num green">20+ hrs</div>
+      <div class="stat-label">Saved per employee per review cycle</div>
+      <div class="stat-sub">From manual reconstruction to continuous, AI-maintained record</div>
     </div>
     <div class="stat-cell">
       <div class="stat-num purple">$1,500</div>
       <div class="stat-label">Annual cost saving per person</div>
-      <div class="stat-sub">At $50/hr avg IBM fully-loaded cost</div>
+      <div class="stat-sub">At $50/hr avg IBM fully-loaded cost · 30 hrs/year recovered</div>
     </div>
     <div class="stat-cell">
       <div class="stat-num red">$450M</div>
-      <div class="stat-label">Potential annual value (IBM-scale)</div>
-      <div class="stat-sub">100% adoption × 300,000 IBMers</div>
+      <div class="stat-label">Potential annual value at IBM scale</div>
+      <div class="stat-sub">100% adoption across 300,000 IBMers</div>
     </div>
   </div>
 
-  <div style="font-size:13px;font-weight:700;margin-bottom:8px">Task-by-task time breakdown</div>
-  <table class="mb16">
-    <tr><th>Review prep sub-task</th><th>Without Clarity</th><th>With Clarity</th><th>Reduction</th></tr>
+  <div style="font-size:13px;font-weight:700;margin-bottom:8px">Review prep: task-by-task time savings</div>
+  <table class="mb24">
+    <tr><th>Review prep sub-task</th><th>Without Clarity</th><th>With Clarity</th><th>Saving</th></tr>
     <tr>
       <td>Recall and write accomplishments from memory</td>
+      <td class="td-red">4–6 hrs</td><td class="td-green">0 min</td>
+      <td><span class="tag tag-green">100%</span></td>
+    </tr>
+    <tr>
+      <td>Map work to SuccessFactors goals manually</td>
       <td class="td-red">2–3 hrs</td><td class="td-green">0 min</td>
       <td><span class="tag tag-green">100%</span></td>
     </tr>
     <tr>
-      <td>Map work entries to SuccessFactors goals manually</td>
-      <td class="td-red">1–2 hrs</td><td class="td-green">0 min</td>
-      <td><span class="tag tag-green">100%</span></td>
-    </tr>
-    <tr>
       <td>Write self-appraisal narrative</td>
-      <td class="td-red">2–3 hrs</td><td class="td-green">5 min (review AI draft)</td>
+      <td class="td-red">3–4 hrs</td><td class="td-green">5 min (review AI draft)</td>
       <td><span class="tag tag-green">97%</span></td>
     </tr>
     <tr>
-      <td>Assemble evidence (Jira links, Slack threads, metrics)</td>
-      <td class="td-red">1 hr</td><td class="td-green">0 min</td>
+      <td>Assemble evidence from Jira, Slack, email</td>
+      <td class="td-red">2–3 hrs</td><td class="td-green">0 min</td>
       <td><span class="tag tag-green">100%</span></td>
     </tr>
     <tr>
       <td>Generate promotion evidence pack</td>
-      <td class="td-red">3–5 hrs (ad hoc)</td><td class="td-green">1 click (~2 min)</td>
+      <td class="td-red">4–6 hrs (ad hoc)</td><td class="td-green">1 click (~2 min)</td>
       <td><span class="tag tag-green">99%</span></td>
     </tr>
     <tr>
-      <td style="font-weight:700">Total per quarter</td>
-      <td style="font-weight:700;color:var(--red)">~8 hours</td>
-      <td style="font-weight:700;color:var(--green)">~0.5 hours</td>
-      <td><span class="tag tag-green" style="font-size:13px;padding:4px 10px">94% ↓</span></td>
+      <td style="font-weight:700">Total per review cycle</td>
+      <td style="font-weight:700;color:var(--red)">~20 hours</td>
+      <td style="font-weight:700;color:var(--green)">&lt; 10 minutes</td>
+      <td><span class="tag tag-green" style="font-size:13px;padding:4px 10px">98% ↓</span></td>
     </tr>
   </table>
 
-  <div style="font-size:13px;font-weight:700;margin-bottom:8px">IBM-scale cost impact</div>
-  <table class="mb16">
-    <tr><th>Adoption scenario</th><th>Users</th><th>Hours saved / year</th><th>Annual cost saving</th></tr>
+  <div style="font-size:13px;font-weight:700;margin-bottom:8px">IBM-scale cost and revenue opportunity</div>
+  <table class="mb24">
+    <tr><th>Adoption scenario</th><th>Users</th><th>Hours recovered / year</th><th>Annual value</th></tr>
     <tr><td>Conservative (10%)</td><td>30,000</td><td>900,000 hrs</td><td class="td-num">$45M</td></tr>
     <tr><td>Realistic (30%)</td><td>90,000</td><td>2,700,000 hrs</td><td class="td-num">$135M</td></tr>
     <tr><td>Optimistic (60%)</td><td>180,000</td><td>5,400,000 hrs</td><td class="td-num">$270M</td></tr>
     <tr><td style="font-weight:700">Full IBM workforce</td><td style="font-weight:700">300,000</td><td style="font-weight:700">9,000,000 hrs</td><td style="font-weight:700;color:var(--blue);font-size:16px">$450M</td></tr>
   </table>
 
-  <div style="font-size:13px;font-weight:700;margin-bottom:12px">Beyond cost: motivation, alignment &amp; retention</div>
-  <div class="three-col">
+  <div style="font-size:13px;font-weight:700;margin-bottom:12px">Beyond cost savings: leadership, retention &amp; engagement</div>
+  <div class="three-col mb16">
     <div class="card">
-      <div class="card-title" style="color:var(--blue)">↑ Goal alignment rate</div>
-      <div class="card-body">Real-time deviation flags mean employees correct misalignment <strong>during the quarter</strong>, not after it. Goal coverage improves from ~40% evidenced to <strong>85%+ evidenced</strong> by review time.</div>
+      <div class="card-title" style="color:var(--blue)">Evidence-based promotions</div>
+      <div class="card-body">Leaders access a continuous, AI-maintained record of every team member's contributions — making promotion decisions <strong>faster, fairer, and more defensible</strong>. No more relying on memory or recency.</div>
     </div>
     <div class="card">
-      <div class="card-title" style="color:var(--purple)">↑ Career motivation</div>
-      <div class="card-body">Employees with a visible, AI-maintained career roadmap are <strong>2.4× more likely to stay engaged</strong> (Gallup). Clarity makes personal goals and IBM goals the same thing — the same log entry advances both.</div>
+      <div class="card-title" style="color:var(--purple)">Career motivation &amp; engagement</div>
+      <div class="card-body">Employees with a visible, AI-maintained career roadmap are <strong>2.4× more likely to stay engaged</strong> (Gallup). Clarity makes IBM's goals and the employee's personal goals the same thing.</div>
     </div>
     <div class="card">
-      <div class="card-title" style="color:var(--green)">↓ Attrition risk</div>
-      <div class="card-body">Career stagnation is the #1 reason high performers leave IBM. A private growth engine tied to daily work <strong>directly addresses this risk</strong> — without surveillance.</div>
+      <div class="card-title" style="color:var(--green)">Reduced attrition risk</div>
+      <div class="card-body">Career stagnation is the #1 reason high performers leave. A private growth engine tied to daily work <strong>directly addresses the retention risk</strong> — without surveillance or added management overhead.</div>
     </div>
   </div>
 
-  <div class="highlight green mt16">
-    <strong>The compounding effect:</strong> When employees log work that maps to both a SuccessFactors goal AND a personal career milestone, they experience direct evidence that IBM's success and their own growth are the same thing. This alignment drives discretionary effort — the work employees choose to do beyond their job description, which is where IBM's competitive advantage lives.
+  <div class="highlight green">
+    <strong>The compounding effect:</strong> When an employee logs work that maps to a SuccessFactors goal <em>and</em> a personal career milestone simultaneously, they experience direct, daily evidence that IBM's success and their own growth are the same thing. This alignment drives the discretionary effort — the work people choose to do beyond their job description — that is the source of IBM's competitive edge. Clarity makes that alignment visible, measurable, and continuous.
   </div>
 </div>
 
