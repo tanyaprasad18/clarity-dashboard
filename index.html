@@ -1581,103 +1581,124 @@ Road: Clarity MVP shipped to beta users Q3</textarea>
             </div>
           </div>
 
-          <!-- === PANEL 1: Weekly stacked bar chart (no JS needed, pure SVG) === -->
+          <!-- === PANEL 1: Weekly stacked bar chart ===
+               Layout: 24px left margin for y-axis labels (HTML), bars rendered in SVG.
+               SVG viewBox 0 0 660 88. No preserveAspectRatio=none — uniform scaling.
+               11 columns × (48px bar + 12px gap) = 660px. Baseline = y 88.
+               1 entry = 22px. Max 3 entries = 66px. Segments stack upward from y=88.
+               Col x positions (left edge of bar): 0,60,120,180,240,300,360,420,480,540,600
+          -->
           <div style="margin-bottom:4px">
-            <svg width="100%" height="110" viewBox="0 0 720 110" preserveAspectRatio="none" style="display:block;overflow:visible">
-              <defs>
-                <linearGradient id="trendGrad2" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#0f62fe" stop-opacity="0.08"/>
-                  <stop offset="100%" stop-color="#0f62fe" stop-opacity="0"/>
-                </linearGradient>
-              </defs>
-              <!-- Y grid lines -->
-              <line x1="0" y1="20" x2="720" y2="20" stroke="#f0f0f0" stroke-width="1"/>
-              <line x1="0" y1="50" x2="720" y2="50" stroke="#f0f0f0" stroke-width="1"/>
-              <line x1="0" y1="80" x2="720" y2="80" stroke="#f0f0f0" stroke-width="1"/>
-              <!-- Y axis labels -->
-              <text x="0" y="18"  font-size="8" fill="#a8a8a8" font-family="IBM Plex Sans,sans-serif">4</text>
-              <text x="0" y="48"  font-size="8" fill="#a8a8a8" font-family="IBM Plex Sans,sans-serif">2</text>
-              <text x="0" y="78"  font-size="8" fill="#a8a8a8" font-family="IBM Plex Sans,sans-serif">1</text>
-              <text x="0" y="106" font-size="8" fill="#a8a8a8" font-family="IBM Plex Sans,sans-serif">0</text>
+            <div style="display:flex;gap:0;align-items:stretch">
 
-              <!-- Week columns. Bar x starts at 18 (after y-axis label), bar width=52, gap=12. 11 weeks. -->
-              <!-- Each segment height: 1 entry = 26px, 2=52, 3=78, 4=104 (max). Baseline y=107. -->
+              <!-- Y-axis labels — HTML, never distorted -->
+              <div style="width:20px;flex-shrink:0;position:relative;height:88px;margin-right:4px">
+                <span style="position:absolute;bottom:64px;right:0;font-size:9px;color:#a8a8a8;font-weight:600;line-height:1">3</span>
+                <span style="position:absolute;bottom:42px;right:0;font-size:9px;color:#a8a8a8;font-weight:600;line-height:1">2</span>
+                <span style="position:absolute;bottom:20px;right:0;font-size:9px;color:#a8a8a8;font-weight:600;line-height:1">1</span>
+                <span style="position:absolute;bottom:0px;right:0;font-size:9px;color:#a8a8a8;font-weight:600;line-height:1">0</span>
+              </div>
 
-              <!-- WEEK 1: May 2–8 · 3 entries: purple(1) teal(1) green(1) -->
-              <rect x="18"  y="55" width="50" height="26" rx="2" fill="#8a3ffc" opacity="0.85"/>
-              <rect x="18"  y="29" width="50" height="26" rx="2" fill="#009d9a" opacity="0.85"/>
-              <rect x="18"  y="3"  width="50" height="26" rx="2" fill="#24a148" opacity="0.85"/>
+              <!-- SVG bars — xMidYMid meet so bars and gaps stay proportional -->
+              <div style="flex:1;min-width:0">
+                <svg width="100%" viewBox="0 0 660 88" preserveAspectRatio="xMidYMid meet" style="display:block;height:88px">
+                  <!-- Grid lines at y=22 (1 unit), y=44 (2 units), y=66 (3 units) -->
+                  <line x1="0" y1="22" x2="660" y2="22" stroke="#f4f4f4" stroke-width="1"/>
+                  <line x1="0" y1="44" x2="660" y2="44" stroke="#f4f4f4" stroke-width="1"/>
+                  <line x1="0" y1="66" x2="660" y2="66" stroke="#f4f4f4" stroke-width="1"/>
+                  <line x1="0" y1="87" x2="660" y2="87" stroke="#e8e8e8" stroke-width="1"/>
 
-              <!-- WEEK 2: May 9–15 · 2 entries: blue(2) -->
-              <rect x="80"  y="55" width="50" height="52" rx="2" fill="#0f62fe" opacity="0.85"/>
+                  <!--
+                    Col x offsets: 0,60,120,180,240,300,360,420,480,540,600
+                    Bar width: 48px  Gap: 12px
+                    Segment height: 22px each. 1px gap between segments (visual only — use rx=2).
+                    y positions (from bottom, baseline=88):
+                      segment 1 (bottom): y = 88-22 = 66,  height=21
+                      segment 2 (middle): y = 88-44 = 44,  height=21
+                      segment 3 (top):    y = 88-66 = 22,  height=21
+                  -->
 
-              <!-- WEEK 3: May 16–22 · 3 entries: blue(1) teal(1) purple(1) -->
-              <rect x="142" y="55" width="50" height="26" rx="2" fill="#0f62fe" opacity="0.85"/>
-              <rect x="142" y="29" width="50" height="26" rx="2" fill="#009d9a" opacity="0.85"/>
-              <rect x="142" y="3"  width="50" height="26" rx="2" fill="#8a3ffc" opacity="0.85"/>
+                  <!-- W1 May 2–8: 3 entries — purple / teal / green -->
+                  <rect x="0"   y="67" width="48" height="21" rx="2" fill="#8a3ffc" opacity="0.88"/>
+                  <rect x="0"   y="45" width="48" height="21" rx="2" fill="#009d9a" opacity="0.88"/>
+                  <rect x="0"   y="23" width="48" height="21" rx="2" fill="#24a148" opacity="0.88"/>
 
-              <!-- WEEK 4: May 23–29 · 2 entries: green(1) blue(1) -->
-              <rect x="204" y="55" width="50" height="26" rx="2" fill="#24a148" opacity="0.85"/>
-              <rect x="204" y="29" width="50" height="26" rx="2" fill="#0f62fe" opacity="0.85"/>
+                  <!-- W2 May 9–15: 2 entries — blue / blue -->
+                  <rect x="60"  y="67" width="48" height="21" rx="2" fill="#0f62fe" opacity="0.88"/>
+                  <rect x="60"  y="45" width="48" height="21" rx="2" fill="#0f62fe" opacity="0.65"/>
 
-              <!-- WEEK 5: May 30–Jun 5 · 2 entries: orange(1) teal(1) — quieter week -->
-              <rect x="266" y="55" width="50" height="26" rx="2" fill="#ff832b" opacity="0.85"/>
-              <rect x="266" y="29" width="50" height="26" rx="2" fill="#009d9a" opacity="0.85"/>
+                  <!-- W3 May 16–22: 3 entries — blue / teal / purple -->
+                  <rect x="120" y="67" width="48" height="21" rx="2" fill="#0f62fe" opacity="0.88"/>
+                  <rect x="120" y="45" width="48" height="21" rx="2" fill="#009d9a" opacity="0.88"/>
+                  <rect x="120" y="23" width="48" height="21" rx="2" fill="#8a3ffc" opacity="0.88"/>
 
-              <!-- WEEK 6: Jun 6–12 · 3 entries: green(1) blue(1) [conference week — peak] -->
-              <rect x="328" y="55" width="50" height="26" rx="2" fill="#24a148" opacity="0.85"/>
-              <rect x="328" y="29" width="50" height="26" rx="2" fill="#0f62fe" opacity="0.85"/>
-              <rect x="328" y="3"  width="50" height="26" rx="2" fill="#0f62fe" opacity="0.7"/>
+                  <!-- W4 May 23–29: 2 entries — green / blue -->
+                  <rect x="180" y="67" width="48" height="21" rx="2" fill="#24a148" opacity="0.88"/>
+                  <rect x="180" y="45" width="48" height="21" rx="2" fill="#0f62fe" opacity="0.88"/>
 
-              <!-- WEEK 7: Jun 13–19 · 3 entries: green(1) orange(1) purple(1) — high impact week -->
-              <rect x="390" y="55" width="50" height="26" rx="2" fill="#24a148" opacity="0.85"/>
-              <rect x="390" y="29" width="50" height="26" rx="2" fill="#ff832b" opacity="0.85"/>
-              <rect x="390" y="3"  width="50" height="26" rx="2" fill="#8a3ffc" opacity="0.85"/>
+                  <!-- W5 May 30–Jun 5: 2 entries — orange / teal -->
+                  <rect x="240" y="67" width="48" height="21" rx="2" fill="#ff832b" opacity="0.88"/>
+                  <rect x="240" y="45" width="48" height="21" rx="2" fill="#009d9a" opacity="0.88"/>
 
-              <!-- WEEK 8: Jun 20–26 · 2 entries: teal(1) blue(1) — slight dip after peak -->
-              <rect x="452" y="55" width="50" height="26" rx="2" fill="#009d9a" opacity="0.85"/>
-              <rect x="452" y="29" width="50" height="26" rx="2" fill="#0f62fe" opacity="0.85"/>
+                  <!-- W6 Jun 6–12: 3 entries — green / blue / blue (conference ★) -->
+                  <rect x="300" y="67" width="48" height="21" rx="2" fill="#24a148" opacity="0.88"/>
+                  <rect x="300" y="45" width="48" height="21" rx="2" fill="#0f62fe" opacity="0.88"/>
+                  <rect x="300" y="23" width="48" height="21" rx="2" fill="#0f62fe" opacity="0.60"/>
+                  <!-- conference star -->
+                  <text x="324" y="18" font-size="9" fill="#0f62fe" font-family="IBM Plex Sans,sans-serif" text-anchor="middle" opacity="0.7">★</text>
 
-              <!-- WEEK 9: Jun 27–Jul 3 · 3 entries: blue(1) green(1) orange(1) — recovery burst -->
-              <rect x="514" y="55" width="50" height="26" rx="2" fill="#0f62fe" opacity="0.85"/>
-              <rect x="514" y="29" width="50" height="26" rx="2" fill="#24a148" opacity="0.85"/>
-              <rect x="514" y="3"  width="50" height="26" rx="2" fill="#ff832b" opacity="0.85"/>
+                  <!-- W7 Jun 13–19: 3 entries — green / orange / purple -->
+                  <rect x="360" y="67" width="48" height="21" rx="2" fill="#24a148" opacity="0.88"/>
+                  <rect x="360" y="45" width="48" height="21" rx="2" fill="#ff832b" opacity="0.88"/>
+                  <rect x="360" y="23" width="48" height="21" rx="2" fill="#8a3ffc" opacity="0.88"/>
 
-              <!-- WEEK 10: Jul 4–10 · 2 entries: orange(1) purple(1) — mid-week -->
-              <rect x="576" y="55" width="50" height="26" rx="2" fill="#ff832b" opacity="0.85"/>
-              <rect x="576" y="29" width="50" height="26" rx="2" fill="#8a3ffc" opacity="0.85"/>
+                  <!-- W8 Jun 20–26: 2 entries — teal / blue -->
+                  <rect x="420" y="67" width="48" height="21" rx="2" fill="#009d9a" opacity="0.88"/>
+                  <rect x="420" y="45" width="48" height="21" rx="2" fill="#0f62fe" opacity="0.88"/>
 
-              <!-- WEEK 11: Jul 11–14 · 2 entries incl PENDING — blue(1) yellow/pending(1) -->
-              <rect x="638" y="55" width="50" height="26" rx="2" fill="#0f62fe" opacity="0.85"/>
-              <!-- Pending bar: striped/orange outline -->
-              <rect x="638" y="29" width="50" height="26" rx="2" fill="#fff1e0" stroke="#ff832b" stroke-width="1.5" stroke-dasharray="3 2"/>
-              <!-- Pending label -->
-              <text x="663" y="46" font-size="7.5" fill="#ff832b" font-family="IBM Plex Sans,sans-serif" text-anchor="middle" font-weight="600">PENDING</text>
-            </svg>
+                  <!-- W9 Jun 27–Jul 3: 3 entries — blue / green / orange -->
+                  <rect x="480" y="67" width="48" height="21" rx="2" fill="#0f62fe" opacity="0.88"/>
+                  <rect x="480" y="45" width="48" height="21" rx="2" fill="#24a148" opacity="0.88"/>
+                  <rect x="480" y="23" width="48" height="21" rx="2" fill="#ff832b" opacity="0.88"/>
 
-            <!-- Week axis -->
-            <div style="display:flex;padding:0 0 0 18px;font-size:9.5px;color:var(--g50);font-weight:600;letter-spacing:0.04em;margin-top:2px">
-              <div style="width:50px;text-align:center;flex-shrink:0">May 2</div>
-              <div style="width:12px;flex-shrink:0"></div>
-              <div style="width:50px;text-align:center;flex-shrink:0">May 9</div>
-              <div style="width:12px;flex-shrink:0"></div>
-              <div style="width:50px;text-align:center;flex-shrink:0">May 16</div>
-              <div style="width:12px;flex-shrink:0"></div>
-              <div style="width:50px;text-align:center;flex-shrink:0">May 23</div>
-              <div style="width:12px;flex-shrink:0"></div>
-              <div style="width:50px;text-align:center;flex-shrink:0">May 30</div>
-              <div style="width:12px;flex-shrink:0"></div>
-              <div style="width:50px;text-align:center;flex-shrink:0">Jun 6</div>
-              <div style="width:12px;flex-shrink:0"></div>
-              <div style="width:50px;text-align:center;flex-shrink:0">Jun 13</div>
-              <div style="width:12px;flex-shrink:0"></div>
-              <div style="width:50px;text-align:center;flex-shrink:0">Jun 20</div>
-              <div style="width:12px;flex-shrink:0"></div>
-              <div style="width:50px;text-align:center;flex-shrink:0">Jun 27</div>
-              <div style="width:12px;flex-shrink:0"></div>
-              <div style="width:50px;text-align:center;flex-shrink:0">Jul 4</div>
-              <div style="width:12px;flex-shrink:0"></div>
-              <div style="width:50px;text-align:center;flex-shrink:0">Jul 11</div>
+                  <!-- W10 Jul 4–10: 2 entries — orange / purple -->
+                  <rect x="540" y="67" width="48" height="21" rx="2" fill="#ff832b" opacity="0.88"/>
+                  <rect x="540" y="45" width="48" height="21" rx="2" fill="#8a3ffc" opacity="0.88"/>
+
+                  <!-- W11 Jul 11–14: 2 entries — blue / pending -->
+                  <rect x="600" y="67" width="48" height="21" rx="2" fill="#0f62fe" opacity="0.88"/>
+                  <rect x="600" y="45" width="48" height="21" rx="2" fill="#fff1e0" stroke="#ff832b" stroke-width="1.5" stroke-dasharray="3 2"/>
+                </svg>
+
+                <!-- X-axis week labels — flex row, one cell per column, same proportions as SVG viewBox -->
+                <!-- 11 cols × (48+12)=660 units. Each col is 48 wide, gap 12. Label centred on bar. -->
+                <!-- Use table-layout: fixed on a table so cells are identical to SVG column widths -->
+                <table style="width:100%;table-layout:fixed;border-collapse:collapse;margin-top:3px">
+                  <tr>
+                    <td style="font-size:9px;color:var(--g50);font-weight:600;text-align:center;padding:0;width:48px">May 2</td>
+                    <td style="width:12px;padding:0"></td>
+                    <td style="font-size:9px;color:var(--g50);font-weight:600;text-align:center;padding:0;width:48px">May 9</td>
+                    <td style="width:12px;padding:0"></td>
+                    <td style="font-size:9px;color:var(--g50);font-weight:600;text-align:center;padding:0;width:48px">May 16</td>
+                    <td style="width:12px;padding:0"></td>
+                    <td style="font-size:9px;color:var(--g50);font-weight:600;text-align:center;padding:0;width:48px">May 23</td>
+                    <td style="width:12px;padding:0"></td>
+                    <td style="font-size:9px;color:var(--g50);font-weight:600;text-align:center;padding:0;width:48px">May 30</td>
+                    <td style="width:12px;padding:0"></td>
+                    <td style="font-size:9px;color:var(--g50);font-weight:600;text-align:center;padding:0;width:48px">Jun 6</td>
+                    <td style="width:12px;padding:0"></td>
+                    <td style="font-size:9px;color:var(--g50);font-weight:600;text-align:center;padding:0;width:48px">Jun 13</td>
+                    <td style="width:12px;padding:0"></td>
+                    <td style="font-size:9px;color:var(--g50);font-weight:600;text-align:center;padding:0;width:48px">Jun 20</td>
+                    <td style="width:12px;padding:0"></td>
+                    <td style="font-size:9px;color:var(--g50);font-weight:600;text-align:center;padding:0;width:48px">Jun 27</td>
+                    <td style="width:12px;padding:0"></td>
+                    <td style="font-size:9px;color:var(--g50);font-weight:600;text-align:center;padding:0;width:48px">Jul 4</td>
+                    <td style="width:12px;padding:0"></td>
+                    <td style="font-size:9px;color:var(--g50);font-weight:600;text-align:center;padding:0;width:48px">Jul 11</td>
+                  </tr>
+                </table>
+              </div>
             </div>
           </div>
 
@@ -1688,100 +1709,105 @@ Road: Clarity MVP shipped to beta users Q3</textarea>
             <div style="flex:1;height:1px;background:var(--g10)"></div>
           </div>
 
-          <!-- === PANEL 2: Momentum sparkline with realistic shape + clickable dots === -->
-          <div style="position:relative;width:100%;height:80px" id="trendChartWrap">
-            <!-- SVG: realistic non-linear momentum curve — rises, plateaus, dips, re-accelerates -->
-            <svg width="100%" height="80" viewBox="0 0 720 80" preserveAspectRatio="none" style="display:block;position:absolute;top:0;left:0;width:100%;height:100%">
+          <!-- === PANEL 2: Momentum sparkline — paths only in SVG, text annotations as HTML === -->
+          <!-- Wrapper adds 18px top padding for annotation labels above the curve -->
+          <div style="position:relative;width:100%;height:98px" id="trendChartWrap">
+
+            <!-- SVG: paths and grid only — NO text inside preserveAspectRatio=none SVGs -->
+            <svg width="100%" height="98" viewBox="0 0 720 98" preserveAspectRatio="none" style="display:block;position:absolute;top:0;left:0;width:100%;height:100%">
               <defs>
                 <linearGradient id="momentumFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#0f62fe" stop-opacity="0.12"/>
+                  <stop offset="0%" stop-color="#0f62fe" stop-opacity="0.11"/>
                   <stop offset="100%" stop-color="#0f62fe" stop-opacity="0.01"/>
                 </linearGradient>
               </defs>
-              <!-- Grid -->
-              <line x1="0" y1="20" x2="720" y2="20" stroke="#f4f4f4" stroke-width="1"/>
-              <line x1="0" y1="50" x2="720" y2="50" stroke="#f4f4f4" stroke-width="1"/>
+              <!-- Grid (shifted down 18px to account for label headroom) -->
+              <line x1="0" y1="38" x2="720" y2="38" stroke="#f4f4f4" stroke-width="1"/>
+              <line x1="0" y1="68" x2="720" y2="68" stroke="#f4f4f4" stroke-width="1"/>
 
-              <!-- Realistic curve: starts low, climbs unevenly, plateaus mid-May, dips early-Jun,
-                   spikes at conference (Jun 9), brief plateau, another spike (Jun 14 workshop),
-                   dips Jun 20–25, burst Jul 3, mild tail off, pending Jul 14 -->
-              <!-- Area fill -->
+              <!-- Area fill — curve shifted down 18px (was 80-tall, now 98-tall, +18 offset) -->
               <path d="
-                M24,68
-                C32,66 40,63 48,60
-                C56,57 64,56 72,54
-                C80,52 88,53 96,56
-                C104,59 108,58 117,55
-                C126,52 130,50 140,48
-                C150,46 156,47 164,50
-                C172,53 175,51 187,47
-                C199,43 202,42 210,40
-                C218,38 222,37 234,38
-                C246,39 248,41 258,44
-                C268,47 268,45 281,40
-                C294,35 296,33 305,28
-                C314,23 316,22 328,24
-                C340,26 342,27 351,30
-                C360,33 363,31 375,28
-                C387,25 390,23 398,20
-                C406,17 408,18 421,22
-                C434,26 435,28 445,32
-                C455,36 457,37 468,38
-                C479,39 480,38 491,36
-                C502,34 504,32 515,28
-                C526,24 528,22 540,18
-                C552,14 554,15 562,18
-                C570,21 572,23 585,28
-                C598,33 600,34 608,36
-                C616,38 618,37 632,35
-                C646,33 648,31 655,28
-                C662,25 668,24 700,22
-                L720,22 L720,80 L0,80 Z"
+                M24,86 C32,84 40,81 48,78
+                C56,75 64,74 72,72
+                C80,70 88,71 96,74
+                C104,77 108,76 117,73
+                C126,70 130,68 140,66
+                C150,64 156,65 164,68
+                C172,71 175,69 187,65
+                C199,61 202,60 210,58
+                C218,56 222,55 234,56
+                C246,57 248,59 258,62
+                C268,65 268,63 281,58
+                C294,53 296,51 305,46
+                C314,41 316,40 328,42
+                C340,44 342,45 351,48
+                C360,51 363,49 375,46
+                C387,43 390,41 398,38
+                C406,35 408,36 421,40
+                C434,44 435,46 445,50
+                C455,54 457,55 468,56
+                C479,57 480,56 491,54
+                C502,52 504,50 515,46
+                C526,42 528,40 540,36
+                C552,32 554,33 562,36
+                C570,39 572,41 585,46
+                C598,51 600,52 608,54
+                C616,56 618,55 632,53
+                C646,51 648,49 655,46
+                C662,43 668,42 700,40
+                L720,40 L720,98 L0,98 Z"
                 fill="url(#momentumFill)"/>
+
               <!-- Momentum line -->
               <path d="
-                M24,68
-                C32,66 40,63 48,60
-                C56,57 64,56 72,54
-                C80,52 88,53 96,56
-                C104,59 108,58 117,55
-                C126,52 130,50 140,48
-                C150,46 156,47 164,50
-                C172,53 175,51 187,47
-                C199,43 202,42 210,40
-                C218,38 222,37 234,38
-                C246,39 248,41 258,44
-                C268,47 268,45 281,40
-                C294,35 296,33 305,28
-                C314,23 316,22 328,24
-                C340,26 342,27 351,30
-                C360,33 363,31 375,28
-                C387,25 390,23 398,20
-                C406,17 408,18 421,22
-                C434,26 435,28 445,32
-                C455,36 457,37 468,38
-                C479,39 480,38 491,36
-                C502,34 504,32 515,28
-                C526,24 528,22 540,18
-                C552,14 554,15 562,18
-                C570,21 572,23 585,28
-                C598,33 600,34 608,36
-                C616,38 618,37 632,35
-                C646,33 648,31 655,28
-                C662,25 668,24 700,22"
+                M24,86 C32,84 40,81 48,78
+                C56,75 64,74 72,72
+                C80,70 88,71 96,74
+                C104,77 108,76 117,73
+                C126,70 130,68 140,66
+                C150,64 156,65 164,68
+                C172,71 175,69 187,65
+                C199,61 202,60 210,58
+                C218,56 222,55 234,56
+                C246,57 248,59 258,62
+                C268,65 268,63 281,58
+                C294,53 296,51 305,46
+                C314,41 316,40 328,42
+                C340,44 342,45 351,48
+                C360,51 363,49 375,46
+                C387,43 390,41 398,38
+                C406,35 408,36 421,40
+                C434,44 435,46 445,50
+                C455,54 457,55 468,56
+                C479,57 480,56 491,54
+                C502,52 504,50 515,46
+                C526,42 528,40 540,36
+                C552,32 554,33 562,36
+                C570,39 572,41 585,46
+                C598,51 600,52 608,54
+                C616,56 618,55 632,53
+                C646,51 648,49 655,46
+                C662,43 668,42 700,40"
                 fill="none" stroke="#0f62fe" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
-              <!-- Annotate dip: "Jun 2–7 quiet" -->
-              <line x1="258" y1="44" x2="258" y2="10" stroke="#a8a8a8" stroke-width="0.8" stroke-dasharray="2 2"/>
-              <text x="260" y="9" font-size="7.5" fill="#a8a8a8" font-family="IBM Plex Sans,sans-serif">dip</text>
-              <!-- Annotate peak: "Jun 9 conference" -->
-              <line x1="305" y1="28" x2="305" y2="10" stroke="#0f62fe" stroke-width="0.8" stroke-dasharray="2 2" opacity="0.5"/>
-              <text x="307" y="9" font-size="7.5" fill="#0f62fe" font-family="IBM Plex Sans,sans-serif" opacity="0.7">conf.</text>
-              <!-- Annotate peak: "Jun 14 workshop" -->
-              <line x1="398" y1="20" x2="398" y2="10" stroke="#8a3ffc" stroke-width="0.8" stroke-dasharray="2 2" opacity="0.5"/>
-              <text x="400" y="9" font-size="7.5" fill="#8a3ffc" font-family="IBM Plex Sans,sans-serif" opacity="0.7">wkshp</text>
-              <!-- Gap dashed tail — pending Jul 14 -->
-              <line x1="655" y1="28" x2="700" y2="22" stroke="#ff832b" stroke-width="1.5" stroke-dasharray="4 3"/>
+
+              <!-- Annotation tick lines only — no text in this SVG -->
+              <line x1="258" y1="62" x2="258" y2="24" stroke="#c8c8c8" stroke-width="0.8" stroke-dasharray="2 2"/>
+              <line x1="305" y1="46" x2="305" y2="24" stroke="#0f62fe" stroke-width="0.8" stroke-dasharray="2 2" opacity="0.4"/>
+              <line x1="398" y1="38" x2="398" y2="24" stroke="#8a3ffc" stroke-width="0.8" stroke-dasharray="2 2" opacity="0.4"/>
+
+              <!-- Pending dashed tail -->
+              <line x1="655" y1="46" x2="700" y2="40" stroke="#ff832b" stroke-width="1.5" stroke-dasharray="4 3"/>
             </svg>
+
+            <!-- HTML annotation labels — sit above the curve, never distorted by SVG scaling -->
+            <div style="position:absolute;top:4px;left:0;width:100%;pointer-events:none">
+              <!-- "dip" at ~35.8% from left (258/720) -->
+              <span style="position:absolute;left:35.8%;transform:translateX(-50%);font-size:9px;color:#b0b0b0;font-weight:600;white-space:nowrap;letter-spacing:0.03em">quiet</span>
+              <!-- "conf." at ~42.4% (305/720) -->
+              <span style="position:absolute;left:42.4%;transform:translateX(-50%);font-size:9px;color:#0f62fe;font-weight:600;white-space:nowrap;opacity:0.7;letter-spacing:0.03em">conf.</span>
+              <!-- "wkshp" at ~55.3% (398/720) -->
+              <span style="position:absolute;left:55.3%;transform:translateX(-50%);font-size:9px;color:#8a3ffc;font-weight:600;white-space:nowrap;opacity:0.8;letter-spacing:0.03em">wkshp</span>
+            </div>
 
             <!-- HTML dot overlay — always perfectly round, clickable -->
             <div id="logDots" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none"></div>
@@ -3099,32 +3125,32 @@ function saveSettings() {
 
 // ── LOG DATA + DOT RENDERER ──
 const logData = [
-  // x/y remapped to 720×80 momentum sparkline — curve has dips, peaks, plateaus
-  { id:0,  date:'May 2',  label:'Carbon DS accessibility review',           color:'var(--purple)', x:24,  y:68, source:'Manual',       skills:['Design Systems','Accessibility','UX Quality'],    impact:'Reviewed Carbon DS components for WCAG AA compliance, raising quality bar for the design system.',     metrics:'• 6 components reviewed\n• 4 feedback issues filed',         goal:'Deliver Q3 watsonx UX milestones', okr:'O1 KR2' },
-  { id:1,  date:'May 5',  label:'Stakeholder debrief — Q2 roadmap',         color:'var(--teal)',   x:48,  y:60, source:'Manual',       skills:['Stakeholder Mgmt','Communication','Strategy'],    impact:'Facilitated Q2 roadmap debrief aligning 8 stakeholders on priorities and open items.',              metrics:'• 8 stakeholders\n• 3 action items',                         goal:'Build cross-functional influence', okr:'O2 KR1' },
-  { id:2,  date:'May 8',  label:'Mentorship 1:1 with junior designer',      color:'var(--green)',  x:72,  y:54, source:'Manual',       skills:['Mentorship','Communication','Leadership'],         impact:'Conducted structured mentorship 1:1, identifying growth areas and setting a 30-day plan.',           metrics:'• 1 mentee\n• 30-day plan set',                              goal:'Mentor 2 junior designers',        okr:'O2 KR2' },
-  { id:3,  date:'May 11', label:'Design sprint planning — watsonx Q2',      color:'var(--blue)',   x:96,  y:56, source:'Manual',       skills:['UX Design','Facilitation','Stakeholder Mgmt'],    impact:'Led sprint planning for watsonx Q2, scoping 4 features and aligning engineering partners.',          metrics:'• 4 features scoped\n• 2 teams aligned',                    goal:'Deliver Q3 watsonx UX milestones', okr:'O1 KR1' },
-  { id:4,  date:'May 15', label:'UX research synthesis',                    color:'var(--blue)',   x:120, y:52, source:'Manual',       skills:['UX Design','Research','Communication'],            impact:'Synthesised 12 user interviews into 5 key insight clusters, informing Q3 product direction.',         metrics:'• 12 interviews\n• 5 insight clusters',                      goal:'Deliver Q3 watsonx UX milestones', okr:'O1 KR1' },
-  { id:5,  date:'May 18', label:'Figma spec handoff to engineering',         color:'var(--teal)',   x:144, y:48, source:'Manual',       skills:['UX Design','Stakeholder Mgmt','Communication'],   impact:'Delivered complete Figma specs to engineering, unblocking sprint start and reducing re-work risk.',   metrics:'• 1 component library\n• 3 engineers unblocked',            goal:'Deliver Q3 watsonx UX milestones', okr:'O1 KR1' },
-  { id:6,  date:'May 22', label:'Cross-team alignment meeting',              color:'var(--purple)', x:166, y:50, source:'Manual',       skills:['Design Systems','Facilitation','Leadership'],      impact:'Led cross-team alignment across 3 squads, resolving 2 design debt issues blocking delivery.',         metrics:'• 3 squads aligned\n• 2 blockers resolved',                  goal:'Build cross-functional influence', okr:'O2 KR1' },
-  { id:7,  date:'May 25', label:'Mentorship — design critique session',      color:'var(--green)',  x:188, y:47, source:'Manual',       skills:['Mentorship','Communication','UX Design'],          impact:'Ran structured critique session for 2 junior designers, strengthening portfolio quality.',             metrics:'• 2 designers\n• 6 pieces reviewed',                        goal:'Mentor 2 junior designers',        okr:'O2 KR2' },
-  { id:8,  date:'May 28', label:'Watsonx design review with product team',  color:'var(--blue)',   x:210, y:40, source:'Manual',       skills:['UX Design','Stakeholder Mgmt','Communication'],   impact:'Presented watsonx design direction to product team, securing alignment on Q3 visual language.',        metrics:'• 1 design direction\n• 6 attendees',                        goal:'Deliver Q3 watsonx UX milestones', okr:'O1 KR1' },
-  { id:9,  date:'May 30', label:'AI strategy doc — first draft',             color:'var(--orange)', x:234, y:38, source:'Manual',       skills:['Strategy','AI Strategy','Communication'],          impact:'Drafted first AI product strategy doc, framing Clarity\'s position in IBM\'s AI portfolio.',           metrics:'• 1 strategy document\n• 2,400 words',                       goal:'Drive AI product strategy',        okr:'O1 KR1' },
-  { id:10, date:'Jun 2',  label:'Sprint retrospective facilitation',         color:'var(--teal)',   x:258, y:44, source:'Manual',       skills:['Facilitation','Leadership','Process Improvement'], impact:'Facilitated sprint retro for 10-person squad, surfacing 4 process improvements for Q3.',              metrics:'• 10 attendees\n• 4 improvements identified',               goal:'Build cross-functional influence', okr:'O2 KR1' },
-  { id:11, date:'Jun 7',  label:'Accessibility audit — WCAG AA review',     color:'var(--green)',  x:281, y:40, source:'Manual',       skills:['Accessibility','UX Design','Design Systems'],      impact:'Completed full WCAG AA audit of 4 product surfaces, filing 11 issues and closing 6.',                metrics:'• 4 surfaces audited\n• 11 issues filed\n• 6 closed',       goal:'Deliver Q3 watsonx UX milestones', okr:'O1 KR2' },
-  { id:12, date:'Jun 9',  label:'IBM Design internal conference talk',       color:'var(--blue)',   x:305, y:28, source:'Manual',       skills:['Exec Presence','Communication','Leadership'],      impact:'Delivered 20-minute talk at IBM Design internal conference, sharing watsonx UX learnings with 80+ designers.', metrics:'• 80+ attendees\n• 20-minute talk',                    goal:'Build cross-functional influence', okr:'O2 KR1' },
-  { id:13, date:'Jun 11', label:'Mentorship 1:1 — career conversation',      color:'var(--green)',  x:328, y:24, source:'Manual',       skills:['Mentorship','Communication','Leadership'],         impact:'Ran career-focused 1:1, reviewing mentee\'s 6-month growth plan and identifying stretch opportunity.',  metrics:'• 1 mentee\n• 1 stretch project identified',               goal:'Mentor 2 junior designers',        okr:'O2 KR2' },
-  { id:14, date:'Jun 14', label:'Product strategy workshop — VP invited',    color:'var(--orange)', x:351, y:30, source:'Manual',       skills:['Strategy','Exec Presence','Stakeholder Mgmt'],    impact:'Ran product strategy workshop with VP attendance, setting direction for H2 AI product investments.',   metrics:'• VP attendance\n• 3 strategy bets defined',               goal:'Drive AI product strategy',        okr:'O1 KR1' },
-  { id:15, date:'Jun 18', label:'Design systems governance framework',       color:'var(--purple)', x:398, y:20, source:'Manual',       skills:['Design Systems','Leadership','Process Improvement'], impact:'Authored design systems governance framework adopted by 4 product teams across IBM.',                metrics:'• 4 product teams\n• 1 governance doc',                     goal:'Deliver Q3 watsonx UX milestones', okr:'O2 KR1' },
-  { id:16, date:'Jun 20', label:'Cross-functional retro — 8 attendees',      color:'var(--teal)',   x:421, y:22, source:'Manual',       skills:['Facilitation','Leadership','Stakeholder Mgmt'],    impact:'Facilitated cross-functional retro across design and engineering, aligning on 3 shared process wins.',  metrics:'• 8 attendees\n• 3 shared wins',                            goal:'Build cross-functional influence', okr:'O2 KR1' },
-  { id:17, date:'Jun 25', label:'Stakeholder presentation — Q3 roadmap',     color:'var(--blue)',   x:445, y:32, source:'Manual',       skills:['Exec Presence','Stakeholder Mgmt','UX Design'],   impact:'Presented Q3 roadmap to 12 senior stakeholders, securing buy-in for 3 design-led initiatives.',        metrics:'• 12 stakeholders\n• 3 initiatives approved',               goal:'Build cross-functional influence', okr:'O1 KR1' },
-  { id:18, date:'Jun 28', label:'Figma component library — v2 release',      color:'var(--blue)',   x:468, y:38, source:'Manual',       skills:['Design Systems','UX Design','Communication'],      impact:'Released Figma component library v2 with 40+ updated components, reducing design time for 6 squads.',  metrics:'• 40+ components\n• 6 squads benefitting',                  goal:'Deliver Q3 watsonx UX milestones', okr:'O1 KR1' },
-  { id:19, date:'Jun 30', label:'Mentorship — goal-setting session',          color:'var(--green)',  x:491, y:36, source:'Manual',       skills:['Mentorship','Leadership','Communication'],         impact:'Led goal-setting session with mentee, creating a structured 90-day development plan.',                metrics:'• 1 mentee\n• 90-day plan created',                         goal:'Mentor 2 junior designers',        okr:'O2 KR2' },
-  { id:20, date:'Jul 3',  label:'AI product strategy — exec briefing',       color:'var(--orange)', x:515, y:28, source:'Manual',       skills:['Strategy','AI Strategy','Exec Presence'],          impact:'Delivered exec briefing on AI product strategy, influencing Q3 investment decisions at VP level.',      metrics:'• VP-level audience\n• 1 strategy briefing',                goal:'Drive AI product strategy',        okr:'O1 KR1' },
-  { id:21, date:'Jul 7',  label:'Stakeholder pres — Clarity MVP',            color:'var(--orange)', x:540, y:18, source:'Teams',        skills:['Exec Presence','Strategy','Stakeholder Mgmt'],    impact:'Presented Clarity MVP to 12 stakeholders including VPs, securing approval for Q3 beta rollout.',       metrics:'• 12 attendees (VP-level)\n• Beta approved',                goal:'Drive AI product strategy',        okr:'O1 KR1' },
-  { id:22, date:'Jul 9',  label:'Carbon DS accessibility review',            color:'var(--purple)', x:585, y:28, source:'Teams',        skills:['Design Systems','Accessibility','UX Quality'],    impact:'Reviewed Carbon DS components via Teams session, closing 6 accessibility issues ahead of Q3 release.', metrics:'• 6 issues closed\n• WCAG AA confirmed',                    goal:'Deliver Q3 watsonx UX milestones', okr:'O1 KR2' },
-  { id:23, date:'Jul 11', label:'watsonx dashboard sprint retro',            color:'var(--blue)',   x:632, y:35, source:'Manual',       skills:['Facilitation','Team Leadership','Process Improvement'], impact:'Facilitated sprint retro for 8-person squad, identifying 3 process improvements for Q3 acceleration.',metrics:'• 8 attendees\n• 3 improvements',                           goal:'Build cross-functional influence', okr:'O2 KR1' },
-  { id:24, date:'Jul 14', label:'watsonx Q3 Design Review (pending)',        color:'var(--yellow)', x:700, y:22, source:'Teams',        skills:['UX Design','Stakeholder Mgmt','Accessibility'],   impact:'Presented updated Q3 dashboard designs. Resolved WCAG AA issues. Engineering approved sprint start.',  metrics:'• 6 attendees\n• WCAG AA resolved\n• Sprint approved',     goal:'Deliver Q3 watsonx UX milestones', okr:'O1 KR1', pending:true },
+  // x/y mapped to 720×98 momentum sparkline (curve shifted +18px from previous 80-tall viewBox)
+  { id:0,  date:'May 2',  label:'Carbon DS accessibility review',           color:'var(--purple)', x:24,  y:86, source:'Manual',       skills:['Design Systems','Accessibility','UX Quality'],    impact:'Reviewed Carbon DS components for WCAG AA compliance, raising quality bar for the design system.',     metrics:'• 6 components reviewed\n• 4 feedback issues filed',         goal:'Deliver Q3 watsonx UX milestones', okr:'O1 KR2' },
+  { id:1,  date:'May 5',  label:'Stakeholder debrief — Q2 roadmap',         color:'var(--teal)',   x:48,  y:78, source:'Manual',       skills:['Stakeholder Mgmt','Communication','Strategy'],    impact:'Facilitated Q2 roadmap debrief aligning 8 stakeholders on priorities and open items.',              metrics:'• 8 stakeholders\n• 3 action items',                         goal:'Build cross-functional influence', okr:'O2 KR1' },
+  { id:2,  date:'May 8',  label:'Mentorship 1:1 with junior designer',      color:'var(--green)',  x:72,  y:72, source:'Manual',       skills:['Mentorship','Communication','Leadership'],         impact:'Conducted structured mentorship 1:1, identifying growth areas and setting a 30-day plan.',           metrics:'• 1 mentee\n• 30-day plan set',                              goal:'Mentor 2 junior designers',        okr:'O2 KR2' },
+  { id:3,  date:'May 11', label:'Design sprint planning — watsonx Q2',      color:'var(--blue)',   x:96,  y:74, source:'Manual',       skills:['UX Design','Facilitation','Stakeholder Mgmt'],    impact:'Led sprint planning for watsonx Q2, scoping 4 features and aligning engineering partners.',          metrics:'• 4 features scoped\n• 2 teams aligned',                    goal:'Deliver Q3 watsonx UX milestones', okr:'O1 KR1' },
+  { id:4,  date:'May 15', label:'UX research synthesis',                    color:'var(--blue)',   x:120, y:70, source:'Manual',       skills:['UX Design','Research','Communication'],            impact:'Synthesised 12 user interviews into 5 key insight clusters, informing Q3 product direction.',         metrics:'• 12 interviews\n• 5 insight clusters',                      goal:'Deliver Q3 watsonx UX milestones', okr:'O1 KR1' },
+  { id:5,  date:'May 18', label:'Figma spec handoff to engineering',         color:'var(--teal)',   x:144, y:66, source:'Manual',       skills:['UX Design','Stakeholder Mgmt','Communication'],   impact:'Delivered complete Figma specs to engineering, unblocking sprint start and reducing re-work risk.',   metrics:'• 1 component library\n• 3 engineers unblocked',            goal:'Deliver Q3 watsonx UX milestones', okr:'O1 KR1' },
+  { id:6,  date:'May 22', label:'Cross-team alignment meeting',              color:'var(--purple)', x:166, y:68, source:'Manual',       skills:['Design Systems','Facilitation','Leadership'],      impact:'Led cross-team alignment across 3 squads, resolving 2 design debt issues blocking delivery.',         metrics:'• 3 squads aligned\n• 2 blockers resolved',                  goal:'Build cross-functional influence', okr:'O2 KR1' },
+  { id:7,  date:'May 25', label:'Mentorship — design critique session',      color:'var(--green)',  x:188, y:65, source:'Manual',       skills:['Mentorship','Communication','UX Design'],          impact:'Ran structured critique session for 2 junior designers, strengthening portfolio quality.',             metrics:'• 2 designers\n• 6 pieces reviewed',                        goal:'Mentor 2 junior designers',        okr:'O2 KR2' },
+  { id:8,  date:'May 28', label:'Watsonx design review with product team',  color:'var(--blue)',   x:210, y:58, source:'Manual',       skills:['UX Design','Stakeholder Mgmt','Communication'],   impact:'Presented watsonx design direction to product team, securing alignment on Q3 visual language.',        metrics:'• 1 design direction\n• 6 attendees',                        goal:'Deliver Q3 watsonx UX milestones', okr:'O1 KR1' },
+  { id:9,  date:'May 30', label:'AI strategy doc — first draft',             color:'var(--orange)', x:234, y:56, source:'Manual',       skills:['Strategy','AI Strategy','Communication'],          impact:'Drafted first AI product strategy doc, framing Clarity\'s position in IBM\'s AI portfolio.',           metrics:'• 1 strategy document\n• 2,400 words',                       goal:'Drive AI product strategy',        okr:'O1 KR1' },
+  { id:10, date:'Jun 2',  label:'Sprint retrospective facilitation',         color:'var(--teal)',   x:258, y:62, source:'Manual',       skills:['Facilitation','Leadership','Process Improvement'], impact:'Facilitated sprint retro for 10-person squad, surfacing 4 process improvements for Q3.',              metrics:'• 10 attendees\n• 4 improvements identified',               goal:'Build cross-functional influence', okr:'O2 KR1' },
+  { id:11, date:'Jun 7',  label:'Accessibility audit — WCAG AA review',     color:'var(--green)',  x:281, y:58, source:'Manual',       skills:['Accessibility','UX Design','Design Systems'],      impact:'Completed full WCAG AA audit of 4 product surfaces, filing 11 issues and closing 6.',                metrics:'• 4 surfaces audited\n• 11 issues filed\n• 6 closed',       goal:'Deliver Q3 watsonx UX milestones', okr:'O1 KR2' },
+  { id:12, date:'Jun 9',  label:'IBM Design internal conference talk',       color:'var(--blue)',   x:305, y:46, source:'Manual',       skills:['Exec Presence','Communication','Leadership'],      impact:'Delivered 20-minute talk at IBM Design internal conference, sharing watsonx UX learnings with 80+ designers.', metrics:'• 80+ attendees\n• 20-minute talk',                    goal:'Build cross-functional influence', okr:'O2 KR1' },
+  { id:13, date:'Jun 11', label:'Mentorship 1:1 — career conversation',      color:'var(--green)',  x:328, y:42, source:'Manual',       skills:['Mentorship','Communication','Leadership'],         impact:'Ran career-focused 1:1, reviewing mentee\'s 6-month growth plan and identifying stretch opportunity.',  metrics:'• 1 mentee\n• 1 stretch project identified',               goal:'Mentor 2 junior designers',        okr:'O2 KR2' },
+  { id:14, date:'Jun 14', label:'Product strategy workshop — VP invited',    color:'var(--orange)', x:351, y:48, source:'Manual',       skills:['Strategy','Exec Presence','Stakeholder Mgmt'],    impact:'Ran product strategy workshop with VP attendance, setting direction for H2 AI product investments.',   metrics:'• VP attendance\n• 3 strategy bets defined',               goal:'Drive AI product strategy',        okr:'O1 KR1' },
+  { id:15, date:'Jun 18', label:'Design systems governance framework',       color:'var(--purple)', x:398, y:38, source:'Manual',       skills:['Design Systems','Leadership','Process Improvement'], impact:'Authored design systems governance framework adopted by 4 product teams across IBM.',                metrics:'• 4 product teams\n• 1 governance doc',                     goal:'Deliver Q3 watsonx UX milestones', okr:'O2 KR1' },
+  { id:16, date:'Jun 20', label:'Cross-functional retro — 8 attendees',      color:'var(--teal)',   x:421, y:40, source:'Manual',       skills:['Facilitation','Leadership','Stakeholder Mgmt'],    impact:'Facilitated cross-functional retro across design and engineering, aligning on 3 shared process wins.',  metrics:'• 8 attendees\n• 3 shared wins',                            goal:'Build cross-functional influence', okr:'O2 KR1' },
+  { id:17, date:'Jun 25', label:'Stakeholder presentation — Q3 roadmap',     color:'var(--blue)',   x:445, y:50, source:'Manual',       skills:['Exec Presence','Stakeholder Mgmt','UX Design'],   impact:'Presented Q3 roadmap to 12 senior stakeholders, securing buy-in for 3 design-led initiatives.',        metrics:'• 12 stakeholders\n• 3 initiatives approved',               goal:'Build cross-functional influence', okr:'O1 KR1' },
+  { id:18, date:'Jun 28', label:'Figma component library — v2 release',      color:'var(--blue)',   x:468, y:56, source:'Manual',       skills:['Design Systems','UX Design','Communication'],      impact:'Released Figma component library v2 with 40+ updated components, reducing design time for 6 squads.',  metrics:'• 40+ components\n• 6 squads benefitting',                  goal:'Deliver Q3 watsonx UX milestones', okr:'O1 KR1' },
+  { id:19, date:'Jun 30', label:'Mentorship — goal-setting session',          color:'var(--green)',  x:491, y:54, source:'Manual',       skills:['Mentorship','Leadership','Communication'],         impact:'Led goal-setting session with mentee, creating a structured 90-day development plan.',                metrics:'• 1 mentee\n• 90-day plan created',                         goal:'Mentor 2 junior designers',        okr:'O2 KR2' },
+  { id:20, date:'Jul 3',  label:'AI product strategy — exec briefing',       color:'var(--orange)', x:515, y:46, source:'Manual',       skills:['Strategy','AI Strategy','Exec Presence'],          impact:'Delivered exec briefing on AI product strategy, influencing Q3 investment decisions at VP level.',      metrics:'• VP-level audience\n• 1 strategy briefing',                goal:'Drive AI product strategy',        okr:'O1 KR1' },
+  { id:21, date:'Jul 7',  label:'Stakeholder pres — Clarity MVP',            color:'var(--orange)', x:540, y:36, source:'Teams',        skills:['Exec Presence','Strategy','Stakeholder Mgmt'],    impact:'Presented Clarity MVP to 12 stakeholders including VPs, securing approval for Q3 beta rollout.',       metrics:'• 12 attendees (VP-level)\n• Beta approved',                goal:'Drive AI product strategy',        okr:'O1 KR1' },
+  { id:22, date:'Jul 9',  label:'Carbon DS accessibility review',            color:'var(--purple)', x:585, y:46, source:'Teams',        skills:['Design Systems','Accessibility','UX Quality'],    impact:'Reviewed Carbon DS components via Teams session, closing 6 accessibility issues ahead of Q3 release.', metrics:'• 6 issues closed\n• WCAG AA confirmed',                    goal:'Deliver Q3 watsonx UX milestones', okr:'O1 KR2' },
+  { id:23, date:'Jul 11', label:'watsonx dashboard sprint retro',            color:'var(--blue)',   x:632, y:53, source:'Manual',       skills:['Facilitation','Team Leadership','Process Improvement'], impact:'Facilitated sprint retro for 8-person squad, identifying 3 process improvements for Q3 acceleration.',metrics:'• 8 attendees\n• 3 improvements',                           goal:'Build cross-functional influence', okr:'O2 KR1' },
+  { id:24, date:'Jul 14', label:'watsonx Q3 Design Review (pending)',        color:'var(--yellow)', x:700, y:40, source:'Teams',        skills:['UX Design','Stakeholder Mgmt','Accessibility'],   impact:'Presented updated Q3 dashboard designs. Resolved WCAG AA issues. Engineering approved sprint start.',  metrics:'• 6 attendees\n• WCAG AA resolved\n• Sprint approved',     goal:'Deliver Q3 watsonx UX milestones', okr:'O1 KR1', pending:true },
 ];
 
 const srcTagClass = { Manual: 'tag-gray', Teams: 'tag-orange' };
@@ -3140,7 +3166,7 @@ const colorToTagClass = {
 function renderLogDots() {
   const wrap = document.getElementById('logDots');
   if (!wrap) return;
-  const W = 720, H = 80;
+  const W = 720, H = 98;
   wrap.innerHTML = '';
   logData.forEach(entry => {
     const d = document.createElement('div');
