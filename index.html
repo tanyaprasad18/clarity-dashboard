@@ -424,6 +424,38 @@ hr { border: none; border-top: 1px solid var(--g20); margin: 14px 0; }
 .ldot:hover::after { opacity: 1; }
 /* pending dot style */
 .ldot-pending { border-color: var(--orange) !important; opacity: 0.88; }
+/* Bar segment hover cells */
+.bseg {
+  position: absolute;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 0.1s;
+}
+.bseg:hover { background: rgba(255,255,255,0.22); }
+.bseg::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 7px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--g100);
+  color: white;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: var(--font);
+  white-space: normal;
+  text-align: center;
+  line-height: 1.4;
+  padding: 5px 10px;
+  border-radius: 3px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s;
+  z-index: 30;
+  max-width: 200px;
+  min-width: 120px;
+}
+.bseg:hover::after { opacity: 1; }
 /* Evidence % bars */
 .ev-bar-row { display: flex; gap: 12px; margin-top: 12px; }
 .ev-bar-tile { flex: 1; background: var(--blue-lt); border-radius: var(--radius); padding: 12px 14px; }
@@ -1600,7 +1632,7 @@ Road: Clarity MVP shipped to beta users Q3</textarea>
               </div>
 
               <!-- SVG bars — xMidYMid meet so bars and gaps stay proportional -->
-              <div style="flex:1;min-width:0">
+              <div style="flex:1;min-width:0;position:relative">
                 <svg width="100%" viewBox="0 0 660 88" preserveAspectRatio="xMidYMid meet" style="display:block;height:88px">
                   <!-- Grid lines at y=22 (1 unit), y=44 (2 units), y=66 (3 units) -->
                   <line x1="0" y1="22" x2="660" y2="22" stroke="#f4f4f4" stroke-width="1"/>
@@ -1669,6 +1701,12 @@ Road: Clarity MVP shipped to beta users Q3</textarea>
                   <rect x="600" y="67" width="48" height="21" rx="2" fill="#0f62fe" opacity="0.88"/>
                   <rect x="600" y="45" width="48" height="21" rx="2" fill="#fff1e0" stroke="#ff832b" stroke-width="1.5" stroke-dasharray="3 2"/>
                 </svg>
+
+                <!-- Clickable overlay cells — one per segment, absolutely positioned to match SVG bars -->
+                <!-- Each cell covers a full bar column (width 48/660 of container width, height = segment height).  -->
+                <!-- Coordinates mirror the SVG: colX/660 = %, segment y/88 = %. colWidth = 48/660 = 7.27%. colH = 21/88 = 23.86% -->
+                <!-- pointer-events on parent div ensures cells receive clicks -->
+                <div id="barOverlay" style="position:absolute;top:0;left:0;width:100%;height:88px;pointer-events:none"></div>
 
                 <!-- X-axis week labels — flex row, one cell per column, same proportions as SVG viewBox -->
                 <!-- 11 cols × (48+12)=660 units. Each col is 48 wide, gap 12. Label centred on bar. -->
@@ -1791,7 +1829,6 @@ Road: Clarity MVP shipped to beta users Q3</textarea>
                 fill="none" stroke="#0f62fe" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
 
               <!-- Annotation tick lines only — no text in this SVG -->
-              <line x1="258" y1="62" x2="258" y2="24" stroke="#c8c8c8" stroke-width="0.8" stroke-dasharray="2 2"/>
               <line x1="305" y1="46" x2="305" y2="24" stroke="#0f62fe" stroke-width="0.8" stroke-dasharray="2 2" opacity="0.4"/>
               <line x1="398" y1="38" x2="398" y2="24" stroke="#8a3ffc" stroke-width="0.8" stroke-dasharray="2 2" opacity="0.4"/>
 
@@ -1801,8 +1838,6 @@ Road: Clarity MVP shipped to beta users Q3</textarea>
 
             <!-- HTML annotation labels — sit above the curve, never distorted by SVG scaling -->
             <div style="position:absolute;top:4px;left:0;width:100%;pointer-events:none">
-              <!-- "dip" at ~35.8% from left (258/720) -->
-              <span style="position:absolute;left:35.8%;transform:translateX(-50%);font-size:9px;color:#b0b0b0;font-weight:600;white-space:nowrap;letter-spacing:0.03em">quiet</span>
               <!-- "conf." at ~42.4% (305/720) -->
               <span style="position:absolute;left:42.4%;transform:translateX(-50%);font-size:9px;color:#0f62fe;font-weight:600;white-space:nowrap;opacity:0.7;letter-spacing:0.03em">conf.</span>
               <!-- "wkshp" at ~55.3% (398/720) -->
@@ -3181,6 +3216,63 @@ function renderLogDots() {
   });
 }
 
+// ── BAR CHART OVERLAY ──
+// Maps each visual bar segment (col, segment index from bottom) to a logData id.
+// Segments are ordered bottom-to-top (index 0 = bottom segment, 2 = top).
+// Col geometry: x = col*60, width = 48. Segment y from top: 67(bot), 45(mid), 23(top). Height = 21.
+// SVG viewBox 660×88. Container height fixed at 88px.
+// pctL = col*60/660,  pctW = 48/660,  pctT = segY/88,  pctH = 21/88
+const barSegmentMap = [
+  // W1 May 2–8 (col 0): bottom=id2(green), mid=id1(teal), top=id0(purple)
+  { col:0, seg:0, id:2 }, { col:0, seg:1, id:1 }, { col:0, seg:2, id:0 },
+  // W2 May 9–15 (col 1): bottom=id3(blue), mid=id4(blue)
+  { col:1, seg:0, id:3 }, { col:1, seg:1, id:4 },
+  // W3 May 16–22 (col 2): bottom=id5(teal), mid=id6(purple) — SVG has 3 slots; top reuses id6
+  { col:2, seg:0, id:5 }, { col:2, seg:1, id:6 }, { col:2, seg:2, id:6 },
+  // W4 May 23–29 (col 3): bottom=id7(green), mid=id8(blue)
+  { col:3, seg:0, id:7 }, { col:3, seg:1, id:8 },
+  // W5 May 30–Jun 5 (col 4): bottom=id9(orange), mid=id10(teal)
+  { col:4, seg:0, id:9 }, { col:4, seg:1, id:10 },
+  // W6 Jun 6–12 (col 5): bottom=id11(green), mid=id12(blue), top=id13(blue)
+  { col:5, seg:0, id:11 }, { col:5, seg:1, id:12 }, { col:5, seg:2, id:13 },
+  // W7 Jun 13–19 (col 6): bottom=id14(orange), mid=id15(purple), top=id16(teal) — 3 entries mapped
+  { col:6, seg:0, id:14 }, { col:6, seg:1, id:15 }, { col:6, seg:2, id:16 },
+  // W8 Jun 20–26 (col 7): bottom=id16(teal), mid=id17(blue) — map distinctly
+  { col:7, seg:0, id:16 }, { col:7, seg:1, id:17 },
+  // W9 Jun 27–Jul 3 (col 8): bottom=id18(blue), mid=id19(green), top=id20(orange)
+  { col:8, seg:0, id:18 }, { col:8, seg:1, id:19 }, { col:8, seg:2, id:20 },
+  // W10 Jul 4–10 (col 9): bottom=id21(orange), mid=id22(purple)
+  { col:9, seg:0, id:21 }, { col:9, seg:1, id:22 },
+  // W11 Jul 11–14 (col 10): bottom=id23(blue), mid=id24(pending)
+  { col:10, seg:0, id:23 }, { col:10, seg:1, id:24 },
+];
+// y positions of segments in SVG (top-to-bottom): bottom seg y=67, mid y=45, top y=23
+const segYMap = [67, 45, 23];
+
+function renderBarOverlay() {
+  const overlay = document.getElementById('barOverlay');
+  if (!overlay) return;
+  overlay.innerHTML = '';
+  overlay.style.pointerEvents = 'none'; // parent transparent; children get events
+  barSegmentMap.forEach(s => {
+    const entry = logData[s.id];
+    if (!entry) return;
+    const colX = s.col * 60;
+    const segY = segYMap[s.seg];
+    const pctL = (colX / 660 * 100).toFixed(3) + '%';
+    const pctT = (segY / 88 * 100).toFixed(3) + '%';
+    const pctW = (48  / 660 * 100).toFixed(3) + '%';
+    const pctH = (21  / 88  * 100).toFixed(3) + '%';
+    const cell = document.createElement('div');
+    cell.className = 'bseg';
+    cell.style.cssText =
+      'left:' + pctL + ';top:' + pctT + ';width:' + pctW + ';height:' + pctH + ';pointer-events:all;';
+    cell.setAttribute('data-tip', entry.date + ' · ' + entry.label);
+    cell.onclick = () => openLogDetail(entry.id);
+    overlay.appendChild(cell);
+  });
+}
+
 function openLogDetail(id) {
   const e = logData[id];
   if (!e) return;
@@ -3212,7 +3304,7 @@ function openLogDetail(id) {
   openModal('mLogDetail');
 }
 
-document.addEventListener('DOMContentLoaded', renderLogDots);
+document.addEventListener('DOMContentLoaded', () => { renderLogDots(); renderBarOverlay(); });
 
 // ── EDIT CAREER DREAM ──
 function saveEditDream() {
